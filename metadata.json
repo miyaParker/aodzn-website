@@ -1,0 +1,6 @@
+{
+  "name": "AODZN Portfolio",
+  "description": "Award-worthy cinematic portfolio with GSAP animations, Lenis smooth scrolling, and interactive digital product experiences.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
