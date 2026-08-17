@@ -1,6 +1,8 @@
+'use client';
+
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { PROJECTS_DATA } from '../data/portfolioData';
 import PortfolioCard, { PortfolioClientTag } from './PortfolioCard';
 import { Project } from '../types';
@@ -203,7 +205,7 @@ function ImageFrame({
 
   return (
     <Link
-      to={`/works/${project.id}`}
+      href={`/works/${project.id}`}
       aria-label={`View ${project.title} case study`}
       data-cursor="view"
       data-cursor-text="VIEW CASE STUDY"

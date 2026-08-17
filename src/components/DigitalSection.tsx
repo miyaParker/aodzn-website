@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useRef } from 'react';
 import { motion } from 'motion/react';
 import { Code, Search, Sparkles, Check } from 'lucide-react';

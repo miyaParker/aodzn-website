@@ -1,10 +1,11 @@
 import { Project, ProcessStep } from '../types';
-import cinetripsLogo from '../../assets/cinetrips/logo.png';
-import cinetripsChallenge1 from '../../assets/cinetrips/challenge-1.png';
-import cinetripsPhonesMockup from '../../assets/cinetrips/frustrated.png';
-import cinetripsBillboardMockup from '../../assets/cinetrips/outdoor-billboard-mockup.png';
-import cinetripsScene from '../../assets/cinetrips/Scene.mp4';
-import cinetripsIphoneMockup from '../../assets/cinetrips/iphone-mockup.png';
+
+const cinetripsLogo = '/assets/cinetrips/logo.png';
+const cinetripsChallenge1 = '/assets/cinetrips/challenge-1.png';
+const cinetripsPhonesMockup = '/assets/cinetrips/frustrated.png';
+const cinetripsBillboardMockup = '/assets/cinetrips/outdoor-billboard-mockup.png';
+const cinetripsScene = '/assets/cinetrips/Scene.mp4';
+const cinetripsIphoneMockup = '/assets/cinetrips/iphone-mockup.png';
 
 export const PROJECTS_DATA: Project[] = [
   {

@@ -1,9 +1,11 @@
+'use client';
+
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 import { ArrowUpRight } from 'lucide-react';
 import { createRipple } from '../lib/animations';
 import { markHeroVideoReady } from '../lib/heroVideoReady';
-import heroVid from '../../assets/scene.mp4'
+const heroVid = '/assets/scene.mp4';
 interface HeroProps {
   ready: boolean;
   onOpenShowreel: () => void;

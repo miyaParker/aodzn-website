@@ -1,10 +1,12 @@
+'use client';
+
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
-import { useLocation } from 'react-router-dom';
+import { usePathname } from 'next/navigation';
 import { Instagram, Linkedin, Globe, ArrowUpRight } from 'lucide-react';
 import { gsap } from 'gsap';
 import { createRipple } from '../lib/animations';
-import logo from '../../assets/logo.svg';
+const logo = '/assets/logo.svg';
 
 interface FooterProps {
   onOpenContact?: () => void;
@@ -24,7 +26,7 @@ const socialLinks = [
 ];
 
 export default function Footer({ onOpenContact }: FooterProps) {
-  const isHome = useLocation().pathname === '/';
+  const isHome = usePathname() === '/';
   const footerRef = useRef<HTMLElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);

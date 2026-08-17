@@ -59,10 +59,23 @@
       "Bash(sips -g pixelWidth -g pixelHeight -g hasAlpha assets/cinetrips/logo.png)",
       "Bash(git init *)",
       "Bash(git add *)",
-      "Bash(git rm *)"
+      "Bash(git rm *)",
+      "Bash(git commit -m ' *)",
+      "Bash(set -e)",
+      "Bash(cp assets/cinetrips/*.png assets/cinetrips/*.mp4 public/assets/cinetrips/)",
+      "Bash(cp assets/illustrations/*.png public/assets/illustrations/)",
+      "Bash(mkdir -p src/app/works/\\\\[id\\\\])",
+      "Bash(echo \"exit: $?\")",
+      "Bash(./node_modules/.bin/next --version)",
+      "Bash(tee /private/tmp/claude-502/-Users-cchub-karen-Documents-Projects-personal-aodzn-website/1c19c4f4-8438-4f1a-a469-d972fb89f860/scratchpad/nextdev.log)",
+      "Bash(ps -p 5598 -o pid,ppid,etime,command)",
+      "Bash(npx --yes playwright screenshot --wait-for-timeout=2000 --viewport-size=1440,900 http://localhost:3003/works /private/tmp/claude-502/-Users-cchub-karen-Documents-Projects-personal-aodzn-website/1c19c4f4-8438-4f1a-a469-d972fb89f860/scratchpad/works.png)",
+      "Bash(npx --yes playwright screenshot --wait-for-timeout=2000 --viewport-size=1440,900 http://localhost:3003/works/wakabeta /private/tmp/claude-502/-Users-cchub-karen-Documents-Projects-personal-aodzn-website/1c19c4f4-8438-4f1a-a469-d972fb89f860/scratchpad/casestudy.png)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3003/works/nonexistent-id)"
     ],
     "additionalDirectories": [
-      "/private/tmp"
+      "/private/tmp",
+      "/Users/cchub-karen/Documents/Projects/personal/aodzn-website/src/app/works"
     ]
   }
 }

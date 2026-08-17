@@ -1,9 +1,11 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useLocation } from 'react-router-dom';
+import { usePathname } from 'next/navigation';
 import { Menu, X, ArrowUpRight, Sparkles } from 'lucide-react';
 import { createRipple } from '../lib/animations';
-import logo from '../../assets/logo.svg';
+const logo = '/assets/logo.svg';
 
 interface NavbarProps {
   onOpenContact: () => void;
@@ -14,7 +16,7 @@ interface NavbarProps {
 // pointed at nothing. DIGITAL's content (stack, tooling) is effectively the
 // services pitch, so it's labeled that way here instead of adding a section.
 export default function Navbar({ onOpenContact, onOpenShowreel }: NavbarProps) {
-  const isHome = useLocation().pathname === '/';
+  const isHome = usePathname() === '/';
   const [activeSection, setActiveSection] = useState('home');
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

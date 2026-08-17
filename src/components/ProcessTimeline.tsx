@@ -1,14 +1,17 @@
+'use client';
+
 import React from 'react';
 import { motion } from 'motion/react';
-import managerDeskIllustration from '../../assets/illustrations/define.png';
-import partnershipIllustration from '../../assets/illustrations/design.png';
-import problemSolving1Illustration from '../../assets/illustrations/deliver.png';
+const managerDeskIllustration = '/assets/illustrations/define.png';
+const partnershipIllustration = '/assets/illustrations/design.png';
+const problemSolving1Illustration = '/assets/illustrations/deliver.png';
 
 const EASE = [0.76, 0, 0.24, 1] as const;
 
 const ILLUSTRATIONS = [
   managerDeskIllustration,
-  partnershipIllustration,
+  partnershipIllustration
+  ,
   problemSolving1Illustration,
 ];
 

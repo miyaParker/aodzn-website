@@ -3,11 +3,11 @@ build/
 dist/
 .next/
 next-env.d.ts
+*.tsbuildinfo
 coverage/
 .DS_Store
 *.log
 .env*
-!.env.example
 
 # Claude Code local session state
 .claude/settings.local.json
