@@ -1,39 +1,53 @@
 'use client';
 
-import React from 'react';
-import { motion } from 'motion/react';
+import React, { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
+
+const WORD_EASE = [0.76, 0, 0.24, 1] as const;
+const ENTER_DURATION = 0.7;
+const EXIT_DURATION = 0.25;
 
 interface Step {
   word: string;
-  suffix: string;
   tag: string;
   description: string;
   accent: string;
+  bgAccent:string;
 }
 
+// `word` is only the tail of each question — the sticky panel supplies the
+// interrogative (WHO/WHY/WHAT) that starts it, so the two columns read as
+// one sentence together: "WHO" + "ARE WE DESIGNING FOR?".
 const STEPS: Step[] = [
   {
-    word: 'DEFINE',
-    suffix: 'FINE',
+    word: 'ARE WE DESIGNING FOR?',
     tag: 'DISCOVERY',
-    description: 'We dig into your goals, your users, and the real problem worth solving.',
+    description: 'We start every project by asking why, not just what — the brief is a starting point, not the answer.',
     accent: '#04a3cc',
+    bgAccent:'#f2fafc'
   },
   {
-    word: 'DESIGN',
-    suffix: 'SIGN',
-    tag: 'ARCHITECTURE',
-    description: 'We structure intuitive flows and information maps that scale with the product.',
+    word: 'DOES THIS MATTER?',
+    tag: 'TRUST',
+    description: 'We tell clients what they need to hear, not just what\'s easy to say.',
     accent: '#f59e0b',
+    bgAccent:'#e6f6fa'
+
   },
   {
-    word: 'DELIVER',
-    suffix: 'LIVER',
-    tag: 'HANDOFF',
-    description: 'We ship polished, production-ready experiences your team can build on.',
+    word: 'COULD THIS BECOME?',
+    tag: 'CONVICTION',
+    description: 'We push for the idea that\'s worth making, not just the one that\'s safe to ship.',
     accent: '#10b981',
+    bgAccent:'#f2fafc'
+
   },
 ];
+
+// One interrogative per row, in the same order as STEPS — the sticky panel
+// cycles to whichever word matches the row currently under the fold, and
+// its own row's `word` above finishes that same sentence.
+const QUESTION_STARTS = ['WHO', 'WHY', 'WHAT'];
 
 function StepDoodle({ accent, variant }: { accent: string; variant: number }) {
   return (
@@ -71,37 +85,91 @@ function StepDoodle({ accent, variant }: { accent: string; variant: number }) {
 }
 
 export default function StrategySection() {
+  const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  // Which row is "current" is whichever row's own center is closest to the
+  // viewport's center — a "top past the fold" threshold flips too early,
+  // while the previous row's content still dominates the screen. This is
+  // the only thing that animates in the section: the sticky panel's word.
+  useEffect(() => {
+    let raf = 0;
+    const measure = () => {
+      raf = 0;
+      const viewportCenter = window.innerHeight / 2;
+      let current = 0;
+      let bestDist = Infinity;
+      rowRefs.current.forEach((el, i) => {
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const dist = Math.abs(rect.top + rect.height / 2 - viewportCenter);
+        if (dist < bestDist) {
+          bestDist = dist;
+          current = i;
+        }
+      });
+      setActiveIndex(current);
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(measure);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    measure();
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
   return (
-    <section id="strategy" className="w-full flex">
-      {/* Shared "DE" block — same height as one row, sticks at the top of the
+    <section id="values" className="w-full flex">
+      {/* Section label — same height as one row, sticks at the top of the
           section so each row scrolls up and intersects it in turn. */}
-      <div className="hidden sm:flex shrink-0 w-72 lg:w-[23rem] min-h-[420px] sm:min-h-[520px] bg-black items-center justify-center sticky top-20 self-start overflow-hidden">
-        <span
-          aria-hidden="true"
-          className="font-display font-medium text-white text-[13rem] lg:text-[18rem] leading-none whitespace-nowrap m-0 p-0"
-        >
-          DE
-        </span>
+      <div className="hidden sm:flex shrink-0 w-72 lg:w-[23rem] min-h-[420px] sm:min-h-[520px] bg-[#0082a8] items-center justify-center sticky top-20 self-start overflow-hidden">
+        <div className="relative flex items-center justify-center" style={{ perspective: 600 }}>
+          <AnimatePresence>
+            <motion.span
+              key={activeIndex}
+              aria-live="polite"
+              initial={{ opacity: 0, y: 40, rotateX: -45 }}
+              animate={{ opacity: 1, y: 0, rotateX: 0 }}
+              exit={{ opacity: 0, position: 'absolute', transition: { duration: EXIT_DURATION, ease: WORD_EASE } }}
+              transition={{ duration: ENTER_DURATION, ease: WORD_EASE }}
+              style={{ transformOrigin: '50% 100%' }}
+              className="font-display font-medium text-white text-9xl lg:text-[13rem] uppercase tracking-tight leading-none whitespace-nowrap"
+            >
+              {QUESTION_STARTS[activeIndex]}
+            </motion.span>
+          </AnimatePresence>
+
+          {/* Pill: same rotated-badge treatment as Hero's word tags, in the
+              same lemon-peel accent as Hero's INTENTIONAL pill. */}
+          <motion.span
+            aria-hidden="true"
+            initial={{ opacity: 0, scale: 0.6, rotate: -16 }}
+            animate={{ opacity: 1, scale: 1, rotate: -6 }}
+            transition={{ duration: 0.7, ease: WORD_EASE, delay: 0.3 }}
+            whileHover={{ rotate: 2, scale: 1.08 }}
+            className="absolute -top-14 right-0 px-6 py-3 rounded-sm bg-[#A5CD04] text-black font-display font-bold text-2xl uppercase select-none cursor-default"
+          >
+            QUESTIONS
+          </motion.span>
+        </div>
       </div>
 
       <div className="flex-1 flex flex-col">
         {STEPS.map((step, index) => (
-          <motion.div
+          <div
             key={step.word}
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.7, ease: 'easeOut' }}
-            className="flex flex-col sm:flex-row min-h-[420px] sm:min-h-[520px] border-b border-black/10 last:border-b-0 bg-white"
+            ref={(el) => { rowRefs.current[index] = el; }}
+            style={{backgroundColor:step.bgAccent}}
+            className="flex flex-col sm:flex-row min-h-[420px] sm:min-h-[520px] border-b border-black/10 last:border-b-0 "
           >
             {/* Headline + description */}
             <div className="flex-1 flex flex-col justify-center gap-4 px-6 sm:px-10 py-10 sm:py-16">
               <div className="flex flex-wrap items-center gap-3" aria-label={step.word}>
-                <h3
-                  aria-hidden="true"
-                  className="text-6xl sm:text-8xl lg:text-9xl font-display font-medium uppercase text-black leading-[0.9]"
-                >
-                  {step.suffix}
+                <h3 className="text-6xl sm:text-8xl lg:text-9xl font-display font-medium uppercase text-black leading-[0.95]">
+                  {step.word}
                 </h3>
                 <motion.span
                   whileHover={{ rotate: 8, scale: 1.1 }}
@@ -120,7 +188,7 @@ export default function StrategySection() {
             <div className="hidden lg:flex w-48 shrink-0 items-center justify-center px-6">
               <StepDoodle accent={step.accent} variant={index} />
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
     </section>

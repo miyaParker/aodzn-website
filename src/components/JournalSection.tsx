@@ -3,7 +3,7 @@
 import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowUpRight } from 'lucide-react';
-import { JOURNAL_ARTICLES } from '../data/journalData';
+import { HomePageContent, JournalArticle } from '../types';
 
 const EASE = [0.76, 0, 0.24, 1] as const;
 const PREVIEW_HEIGHT = 200;
@@ -16,7 +16,15 @@ interface PreviewRect {
   width: number;
 }
 
-export default function JournalSection() {
+interface JournalSectionProps {
+  articles: JournalArticle[];
+  content: HomePageContent['journalSection'];
+}
+
+const formatArticleDate = (date: string) =>
+  new Date(date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase();
+
+export default function JournalSection({ articles, content }: JournalSectionProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [previewRect, setPreviewRect] = useState<PreviewRect | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -26,7 +34,7 @@ export default function JournalSection() {
   // whether the title is long or short.
   const anchorRefs = useRef<(HTMLSpanElement | null)[]>([]);
 
-  const hovered = JOURNAL_ARTICLES.find((article) => article.id === hoveredId) ?? null;
+  const hovered = articles.find((article) => article.id === hoveredId) ?? null;
 
   const showPreview = (id: string, index: number) => {
     setHoveredId(id);
@@ -46,17 +54,19 @@ export default function JournalSection() {
   const clearIfCurrent = (id: string) => setHoveredId((current) => (current === id ? null : current));
 
   return (
-    <section id="journal" className="relative w-full bg-black text-white border-t" style={{ borderColor: '#737373' }}>
+    <section id="journal" className="relative w-full bg-white text-black" style={{ borderColor: '#737373' }}>
       <div className="px-6 sm:px-10 lg:px-16 pt-24 sm:pt-32 pb-24 sm:pb-32">
-        <motion.p
-          className="text-sm text-neutral-400 uppercase tracking-widest mb-6"
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '0px 0px -10% 0px' }}
-          transition={{ duration: 0.6, ease: EASE }}
-        >
-          Latest Writing
-        </motion.p>
+      <p className="text-md text-neutral-500 font-bold uppercase tracking-wider overflow-hidden mb-4">
+                <motion.span
+                  className="block"
+                  initial={{ y: '100%', opacity: 0 }}
+                  whileInView={{ y: '0%', opacity: 1 }}
+                  viewport={{ once: true, amount: 0 }}
+                  transition={{ duration: 0.7, ease: EASE }}
+                >
+                  {content.eyebrowLabel}
+                </motion.span>
+              </p>
         <h2 className="font-display text-6xl sm:text-7xl lg:text-8xl leading-none overflow-hidden">
           <motion.span
             className="block"
@@ -65,12 +75,12 @@ export default function JournalSection() {
             viewport={{ once: true, margin: '0px 0px -10% 0px' }}
             transition={{ duration: 0.9, ease: EASE }}
           >
-            Journal
+            {content.sectionTitle}
           </motion.span>
         </h2>
 
-        <div ref={listRef} className="relative mt-14 sm:mt-20 border-t border-white/10">
-          {JOURNAL_ARTICLES.map((article, index) => (
+        <div ref={listRef} className="relative mt-14 sm:mt-20 border-t border-black/10">
+          {articles.map((article, index) => (
             <div
               key={article.id}
               tabIndex={0}
@@ -80,7 +90,7 @@ export default function JournalSection() {
               onMouseLeave={() => clearIfCurrent(article.id)}
               onFocus={() => showPreview(article.id, index)}
               onBlur={() => clearIfCurrent(article.id)}
-              className="group flex items-center border-b border-white/10 px-2 sm:px-4 py-6 sm:py-8 cursor-pointer transition-colors duration-300 hover:bg-white/[0.04] outline-none focus-visible:bg-white/[0.04]"
+              className="group flex items-center border-b border-black/10 px-2 sm:px-4 py-6 sm:py-8 cursor-pointer transition-colors duration-300 hover:bg-black/[0.04] outline-none focus-visible:bg-black/[0.04]"
             >
               <div className="flex items-center gap-4 sm:gap-5 min-w-0 shrink-0 max-w-[55%] sm:max-w-[45%]">
                 <div
@@ -88,7 +98,7 @@ export default function JournalSection() {
                   className="hidden sm:block w-12 h-12 shrink-0 rounded-sm"
                   style={{ background: article.gradient }}
                 />
-                <span className="text-lg sm:text-xl lg:text-2xl font-medium tracking-tighter text-neutral-300 group-hover:text-white transition-colors truncate">
+                <span className="text-lg sm:text-xl lg:text-2xl font-medium tracking-tighter text-neutral-600 group-hover:text-black transition-colors truncate">
                   {article.title}
                 </span>
               </div>
@@ -101,9 +111,9 @@ export default function JournalSection() {
 
               <div className="flex items-center gap-5 sm:gap-10 shrink-0">
                 <span className="hidden sm:block text-xs tracking-widest text-neutral-500 uppercase">
-                  {article.date}
+                  {formatArticleDate(article.date)}
                 </span>
-                <span className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white text-black flex items-center justify-center shrink-0 transition-colors group-hover:bg-[#04a3cc] group-hover:text-white">
+                <span className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black text-white flex items-center justify-center shrink-0 transition-colors group-hover:bg-[#04a3cc] group-hover:text-white">
                   <ArrowUpRight className="w-4 h-4" />
                 </span>
               </div>

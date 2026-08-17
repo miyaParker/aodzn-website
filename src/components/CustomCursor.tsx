@@ -94,7 +94,7 @@ export default function CustomCursor() {
     video: {
       width: 70,
       height: 70,
-      backgroundColor: '#111111',
+      backgroundColor: '#04a3cc',
       color: '#FFFFFF',
       mixBlendMode: 'normal' as const,
     },

@@ -7,9 +7,12 @@ import { X, Play, Pause, Volume2, VolumeX, Maximize2, Sparkles } from 'lucide-re
 interface ShowreelModalProps {
   isOpen: boolean;
   onClose: () => void;
+  title: string;
+  video: string;
+  posterImage: string;
 }
 
-export default function ShowreelModal({ isOpen, onClose }: ShowreelModalProps) {
+export default function ShowreelModal({ isOpen, onClose, title, video, posterImage }: ShowreelModalProps) {
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
 
@@ -37,7 +40,7 @@ export default function ShowreelModal({ isOpen, onClose }: ShowreelModalProps) {
             <div className="flex items-center gap-3">
               <span className="w-2.5 h-2.5 rounded-[20px] bg-[#04a3cc] animate-ping" />
               <span className="font-syne font-bold text-sm tracking-wide">
-                AODZN — CREATIVE SHOWREEL 2026
+                {title}
               </span>
             </div>
 
@@ -53,15 +56,17 @@ export default function ShowreelModal({ isOpen, onClose }: ShowreelModalProps) {
           {/* Video Container */}
           <div className="relative aspect-16/9 w-full bg-black flex items-center justify-center overflow-hidden">
             {/* High Definition Sample Video or Canvas Reel */}
-            <video
-              autoPlay
-              loop
-              muted={isMuted}
-              playsInline
-              poster="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80"
-              className="w-full h-full object-cover"
-              src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"
-            />
+            {video && (
+              <video
+                autoPlay
+                loop
+                muted={isMuted}
+                playsInline
+                poster={posterImage || undefined}
+                className="w-full h-full object-cover"
+                src={video}
+              />
+            )}
 
             {/* Overlay Gradient */}
             <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent pointer-events-none" />

@@ -30,7 +30,7 @@ export default function PortfolioCard({ project }: PortfolioCardProps) {
             initial={{ opacity: 0, y: '100%' }}
             animate={{ opacity: 1, y: '0%', transition: { duration: 0.3, ease: EASE } }}
             exit={{ opacity: 0, y: '100%', transition: { duration: 0.12, ease: EASE } }}
-            className="font-display tracking- text-white text-6xl sm:text-7xl lg:text-8xl leading-[0.95] capitalize"
+            className="font-display tracking- text-black text-6xl sm:text-7xl lg:text-8xl leading-[0.95] capitalize"
           >
             {project.title.toLowerCase()}
           </motion.h3>
@@ -47,7 +47,7 @@ export default function PortfolioCard({ project }: PortfolioCardProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1, transition: { duration: 0.4, ease: EASE } }}
           exit={{ opacity: 0, transition: { duration: 0.12, ease: EASE } }}
-          className="text-sm sm:text-base text-neutral-400 font-medium leading-relaxed max-w-md"
+          className="text-sm sm:text-base text-neutral-600 font-medium leading-relaxed max-w-md"
         >
           {project.description}
         </motion.p>
@@ -58,7 +58,7 @@ export default function PortfolioCard({ project }: PortfolioCardProps) {
 
 // Client credit, kept separate so it can be pinned to the bottom-left of the
 // sticky panel instead of flowing inline under the description.
-export function PortfolioClientTag({ project }: { project: Project }) {
+export function PortfolioClientTag({ project, clientLabel }: { project: Project; clientLabel: string }) {
   const initials = project.client.charAt(0).toUpperCase();
 
   return (
@@ -85,8 +85,8 @@ export function PortfolioClientTag({ project }: { project: Project }) {
             </div>
           )}
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">Client</p>
-            <p className="text-sm font-semibold text-white">{project.client}</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">{clientLabel}</p>
+            <p className="text-sm font-semibold text-black">{project.client}</p>
           </div>
         </motion.div>
       </AnimatePresence>

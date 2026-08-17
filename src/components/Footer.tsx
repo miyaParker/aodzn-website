@@ -6,26 +6,21 @@ import { usePathname } from 'next/navigation';
 import { Instagram, Linkedin, Globe, ArrowUpRight } from 'lucide-react';
 import { gsap } from 'gsap';
 import { createRipple } from '../lib/animations';
-const logo = '/assets/logo.svg';
+import { HomePageContent, SiteSettings, SocialLink } from '../types';
 
 interface FooterProps {
+  siteSettings: SiteSettings;
+  footerCta: HomePageContent['footerCta'];
   onOpenContact?: () => void;
 }
 
-const menuLinks = [
-  { label: 'Home', href: '#home' },
-  { label: 'Portfolio', href: '#work' },
-  { label: 'My process', href: '#process' },
-  { label: 'About', href: '#strategy' },
-];
+const SOCIAL_ICONS: Record<SocialLink['label'], typeof Instagram> = {
+  Instagram: Instagram,
+  LinkedIn: Linkedin,
+  Website: Globe,
+};
 
-const socialLinks = [
-  { label: 'Instagram', href: 'https://instagram.com', icon: Instagram },
-  { label: 'LinkedIn', href: 'https://linkedin.com', icon: Linkedin },
-  { label: 'Website', href: '#home', icon: Globe },
-];
-
-export default function Footer({ onOpenContact }: FooterProps) {
+export default function Footer({ siteSettings, footerCta, onOpenContact }: FooterProps) {
   const isHome = usePathname() === '/';
   const footerRef = useRef<HTMLElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
@@ -85,23 +80,23 @@ export default function Footer({ onOpenContact }: FooterProps) {
   return (
     <footer
       ref={footerRef}
-      className="bg-black text-white px-8 xl:px-16 pt-24 sm:pt-32 pb-6 flex flex-col"
+      className="bg-white text-black px-8 xl:px-16 pt-24 sm:pt-32 pb-6 flex flex-col"
     >
       {/* CTA */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end mb-16 sm:mb-20">
         <div className="lg:col-span-8">
           <h2
             ref={headingRef}
-            className="text-5xl sm:text-7xl lg:text-8xl font-display font-medium uppercase text-white leading-[0.88]"
+            className="text-5xl sm:text-7xl lg:text-8xl font-display font-medium uppercase text-black leading-[0.88]"
           >
-            <span ref={lineRef} className="block">LET'S BUILD SOMETHING</span>
-            <span ref={highlightRef} className="block text-neutral-500">MEANINGFUL.</span>
+            <span ref={lineRef} className="block">{footerCta.heading}</span>
+            <span ref={highlightRef} className="block text-neutral-500">{footerCta.headingHighlight}</span>
           </h2>
         </div>
 
         <div className="lg:col-span-4 space-y-6">
-          <p className="text-base sm:text-lg text-white font-medium leading-relaxed">
-            I design digital products that solve real problems and create real impact.
+          <p className="text-base sm:text-lg text-black font-medium leading-relaxed">
+            {footerCta.subtext}
           </p>
 
           <div>
@@ -112,9 +107,9 @@ export default function Footer({ onOpenContact }: FooterProps) {
               }}
               data-cursor="hover"
               data-cursor-text="CONNECT"
-              className="relative group inline-flex items-center gap-3 px-8 py-4 tracking-wide rounded-sm bg-white text-black text-2xl sm:text-3xl font-medium font-display uppercase hover:bg-neutral-200 hover:scale-105 active:scale-95 transition-all ripple-container"
+              className="relative group inline-flex items-center gap-3 px-8 py-4 tracking-wide rounded-sm bg-black text-white text-2xl sm:text-3xl font-medium font-display uppercase hover:bg-neutral-800 hover:scale-105 active:scale-95 transition-all ripple-container"
             >
-              <span>LET'S CONNECT</span>
+              <span>{footerCta.ctaLabel}</span>
               <ArrowUpRight className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
             </button>
           </div>
@@ -132,23 +127,25 @@ export default function Footer({ onOpenContact }: FooterProps) {
             className="w-28 sm:w-36 lg:w-40"
           >
             <a href={isHome ? '#home' : '/'} onClick={(e) => scrollToSection(e, '#home')} className="block">
-              <img src={logo} alt="AODZN" className="w-full h-auto" style={{ filter: 'brightness(0) invert(1)' }} />
+              {siteSettings.logo && (
+                <img src={siteSettings.logo} alt={siteSettings.logoAlt} className="w-full h-auto" style={{ filter: 'brightness(0)' }} />
+              )}
             </a>
-            <p className="tracking-wide text-xs uppercase text-neutral-500">Abdulazees Olayinka Design</p>
+            <p className="tracking-wide text-xs uppercase text-neutral-500">{siteSettings.footerLogoTagline}</p>
           </motion.div>
         </div>
 
         {/* Menu / Contact / Social columns */}
         <div className="grid grid-cols-3 gap-8 sm:gap-14 lg:gap-20">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-widest text-neutral-500 mb-4">Menu</p>
+            <p className="text-[11px] font-bold uppercase tracking-widest text-neutral-500 mb-4">{siteSettings.footerMenuColumnLabel}</p>
             <ul className="space-y-2.5">
-              {menuLinks.map((item) => (
+              {siteSettings.footerMenuLinks.map((item) => (
                 <li key={item.label}>
                   <a
                     href={isHome ? item.href : `/${item.href}`}
                     onClick={(e) => scrollToSection(e, item.href)}
-                    className="text-sm sm:text-base text-neutral-300 hover:text-white transition-colors"
+                    className="text-sm sm:text-base text-neutral-600 hover:text-black transition-colors"
                   >
                     {item.label}
                   </a>
@@ -157,29 +154,29 @@ export default function Footer({ onOpenContact }: FooterProps) {
               <li>
                 <button
                   onClick={() => onOpenContact?.()}
-                  className="text-sm sm:text-base text-neutral-300 hover:text-white transition-colors text-left"
+                  className="text-sm sm:text-base text-neutral-600 hover:text-black transition-colors text-left"
                 >
-                  Contact
+                  {siteSettings.footerContactColumnLabel}
                 </button>
               </li>
             </ul>
           </div>
 
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-widest text-neutral-500 mb-4">Contact</p>
+            <p className="text-[11px] font-bold uppercase tracking-widest text-neutral-500 mb-4">{siteSettings.footerContactColumnLabel}</p>
             <a
-              href="mailto:hello@aodzn.com"
-              className="text-sm sm:text-base text-neutral-300 hover:text-white transition-colors break-all"
+              href={`mailto:${siteSettings.footerContactEmail}`}
+              className="text-sm sm:text-base text-neutral-600 hover:text-black transition-colors break-all"
             >
-              hello@aodzn.com
+              {siteSettings.footerContactEmail}
             </a>
           </div>
 
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-widest text-neutral-500 mb-4">Social</p>
+            <p className="text-[11px] font-bold uppercase tracking-widest text-neutral-500 mb-4">{siteSettings.footerSocialColumnLabel}</p>
             <div className="flex items-center gap-2">
-              {socialLinks.map((link) => {
-                const Icon = link.icon;
+              {siteSettings.socialLinks.map((link) => {
+                const Icon = SOCIAL_ICONS[link.label];
                 return (
                   <a
                     key={link.label}
@@ -187,7 +184,7 @@ export default function Footer({ onOpenContact }: FooterProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={link.label}
-                    className="flex items-center justify-center w-9 h-9 rounded-sm border border-neutral-800 text-neutral-400 hover:text-white hover:border-[#04a3cc] transition-colors"
+                    className="flex items-center justify-center w-9 h-9 rounded-sm border border-neutral-300 text-neutral-500 hover:text-black hover:border-[#04a3cc] transition-colors"
                   >
                     <Icon className="w-4 h-4" />
                   </a>
@@ -199,16 +196,15 @@ export default function Footer({ onOpenContact }: FooterProps) {
       </div>
 
       <div className="w-full mt-16 sm:mt-20">
-        <div className="pt-6 border-t border-neutral-800 flex items-center justify-between gap-4 text-xs font-mono text-neutral-500">
-          <p>&copy;2026 AODZN</p>
+        <div className="pt-6 border-t border-neutral-200 flex items-center justify-between gap-4 text-xs font-mono text-neutral-500">
+          <p>&copy;{new Date().getFullYear()} {siteSettings.copyrightName}</p>
 
           <div className="flex items-center gap-6">
-            <a href="#" className="hover:text-white transition-colors">
-              Privacy
-            </a>
-            <a href="#" className="hover:text-white transition-colors">
-              Terms
-            </a>
+            {siteSettings.footerLegalLinks.map((link) => (
+              <a key={link.label} href={link.href} className="hover:text-black transition-colors">
+                {link.label}
+              </a>
+            ))}
           </div>
         </div>
       </div>

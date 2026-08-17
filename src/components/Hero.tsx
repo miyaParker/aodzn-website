@@ -5,10 +5,16 @@ import { motion } from 'motion/react';
 import { ArrowUpRight } from 'lucide-react';
 import { createRipple } from '../lib/animations';
 import { markHeroVideoReady } from '../lib/heroVideoReady';
-const heroVid = '/assets/scene.mp4';
 interface HeroProps {
   ready: boolean;
   onOpenShowreel: () => void;
+  topWordLeft: string;
+  topWordRight: string;
+  bottomWord: string;
+  tagline: string;
+  ctaLabel: string;
+  video: string;
+  sticker: string;
 }
 
 const WORD_EASE = [0.76, 0, 0.24, 1] as const;
@@ -50,7 +56,17 @@ function RevealWord({ ready, delay, className, innerRef, children }: {
   );
 }
 
-export default function Hero({ ready, onOpenShowreel }: HeroProps) {
+export default function Hero({
+  ready,
+  onOpenShowreel,
+  topWordLeft,
+  topWordRight,
+  bottomWord,
+  tagline,
+  ctaLabel,
+  video,
+  sticker,
+}: HeroProps) {
   // A single hidden <video> is the only decoded/playing instance. The two
   // "cards" never get their own <video> — instead each has a <canvas> that
   // repaints itself every frame with a crop of this one video, computed from
@@ -183,16 +199,18 @@ export default function Hero({ ready, onOpenShowreel }: HeroProps) {
       {/* Single source-of-truth video. Never shown directly — the two card
           canvases below repaint themselves from this element every frame,
           which is what keeps them in perfect sync. */}
-      <video
-        ref={videoRef}
-        muted
-        loop
-        playsInline
-        preload="auto"
-        src={heroVid}
-        aria-hidden="true"
-        style={{ position: 'fixed', top: 0, left: 0, width: 1, height: 1, opacity: 0, pointerEvents: 'none' }}
-      />
+      {video && (
+        <video
+          ref={videoRef}
+          muted
+          loop
+          playsInline
+          preload="auto"
+          src={video}
+          aria-hidden="true"
+          style={{ position: 'fixed', top: 0, left: 0, width: 1, height: 1, opacity: 0, pointerEvents: 'none' }}
+        />
+      )}
       <div className="mx-auto w-full max-w-[1250px] @container">
       {/* Top Grid / Display Typography */}
       <div className={`${ready ? 'justify-start' : 'justify-center'} relative w-full flex flex-row flex-nowrap items-stretch gap-y-8 md:gap-y-4 items-start`}>
@@ -203,7 +221,7 @@ export default function Hero({ ready, onOpenShowreel }: HeroProps) {
             delay={0}
             className="text-[20vw] sm:text-[14vw] md:text-[min(21cqw,380px)] font-display font-medium text-black select-none"
           >
-            DE{' '}
+            {topWordLeft}{' '}
           </RevealWord>
         </motion.div>
 
@@ -230,7 +248,7 @@ export default function Hero({ ready, onOpenShowreel }: HeroProps) {
             tabIndex={0}
             aria-label="Play showreel"
             data-cursor="video"
-            data-cursor-text="PLAY"
+            data-cursor-text="WATCH REEL"
             onClick={onOpenShowreel}
             onKeyDown={(e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpenShowreel(); } }}
             initial={{ clipPath: 'inset(0% 0% 0% 100%)' }}
@@ -249,14 +267,31 @@ export default function Hero({ ready, onOpenShowreel }: HeroProps) {
         </motion.div>
 
         {/* EVERY Word (Top Far Right) */}
-        <motion.div layout transition={{ duration: 1, ease: [0.76, 0, 0.24, 1], delay: ready ? 1.4 : 0 }} className="md:col-span-12 md:shrink-0">
+        <motion.div layout transition={{ duration: 1, ease: [0.76, 0, 0.24, 1], delay: ready ? 1.4 : 0 }} className="md:col-span-12 md:shrink-0 relative">
           <RevealWord
             ready={ready}
             delay={0}
             className="text-[20vw] sm:text-[14vw] md:text-[min(21cqw,380px)] font-display font-medium text-black select-none md:whitespace-nowrap"
           >
-            SIGN
+            {topWordRight}
           </RevealWord>
+
+          {/* Tag pill: pops in over the tail of the word, echoing the rotated
+              sticker used near the bottom word. */}
+          <motion.span
+            aria-hidden="true"
+            initial={{ opacity: 0, scale: 0.6, rotate: -16 }}
+            animate={
+              ready
+                ? { opacity: 1, scale: 1, rotate: -6 }
+                : { opacity: 0, scale: 0.6, rotate: -16 }
+            }
+            transition={{ duration: 0.7, ease: WORD_EASE, delay: ready ? 1.7 : 0 }}
+            whileHover={{ rotate: 2, scale: 1.08 }}
+            className="absolute bottom-[8%] right-[6%] sm:right-[10%] px-5 py-2 rounded-sm bg-[#A5CD04] text-black font-display font-bold text-sm sm:text-4xl uppercase select-none cursor-default"
+          >
+            INTENTIONAL
+          </motion.span>
         </motion.div>
       </div>
 
@@ -310,21 +345,61 @@ export default function Hero({ ready, onOpenShowreel }: HeroProps) {
         </motion.div>
 
         {/* PERIENCE Word (Right) */}
-        <motion.div layout transition={{ duration: 1, ease: [0.76, 0, 0.24, 1], delay: ready ? 1.4 : 0 }} className="md:col-span-12 md:shrink-0 text-left md:text-right">
+        <motion.div
+          layout
+          transition={{ duration: 1, ease: [0.76, 0, 0.24, 1], delay: ready ? 1.4 : 0 }}
+          className="md:col-span-12 md:shrink-0 flex items-center gap-2 sm:gap-4 justify-start md:justify-end z-20 relative"
+        >
           <RevealWord
             ready={ready}
             delay={0}
-            className="text-[20vw] sm:text-[14vw] md:text-[min(21cqw,380px)] font-display font-medium text-black select-none md:whitespace-nowrap"
+            className="text-[20vw]  sm:text-[14vw] md:text-[min(21cqw,380px)] font-display font-medium text-black select-none md:whitespace-nowrap"
           >
-            INTENTIONALLY
+            {bottomWord}
           </RevealWord>
+
+          {/* Tag pill: accent-colored twin of the DESIGN pill above, popping
+              in over the start of the word so it doesn't collide with the
+              sticker at the word's tail. */}
+          <motion.span
+            aria-hidden="true"
+            initial={{ opacity: 0, scale: 0.6, rotate: 16 }}
+            animate={
+              ready
+                ? { opacity: 1, scale: 1, rotate: 6 }
+                : { opacity: 0, scale: 0.6, rotate: 16 }
+            }
+            transition={{ duration: 0.7, ease: WORD_EASE, delay: ready ? 1.7 : 0 }}
+            whileHover={{ rotate: -2, scale: 1.08 }}
+            className="absolute bottom-[8%] left-[2%] px-5 py-2 rounded-sm bg-[#04a3cc] text-white font-display font-bold text-sm sm:text-4xl uppercase select-none cursor-default"
+          >
+            BY DESIGN
+          </motion.span>
+
+          {/* Sticker: a small rotated badge that pops in just after the word
+              lands, echoing the tag pills used elsewhere on the site. */}
+          {sticker && (
+            <motion.img
+              src={sticker}
+              alt=""
+              aria-hidden="true"
+              initial={{ opacity: 0, scale: 0.6, rotate: -16 }}
+              animate={
+                ready
+                  ? { opacity: 1, scale: 1, rotate: -8 }
+                  : { opacity: 0, scale: 0.6, rotate: -16 }
+              }
+              transition={{ duration: 0.7, ease: WORD_EASE, delay: ready ? 1.7 : 0 }}
+              whileHover={{ rotate: 4, scale: 1.08 }}
+              className="w-10 sm:w-16 md:w-20 lg:w-32 h-auto absolute z-5-top-30 -right-15 shrink-0 select-none cursor-default"
+            />
+          )}
         </motion.div>
       </div>
 
       <div className="mt-14 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <p className="text-sm sm:text-xl text-neutral-600 max-w-xl font-medium leading-[150%]">
-          I turn complex problems into simple, meaningful products that people{' '}
-            genuinely enjoy using.
+          {tagline}
         </p>
 
         {/* Big Explore Pill Button */}
@@ -333,7 +408,7 @@ export default function Hero({ ready, onOpenShowreel }: HeroProps) {
           onClick={(e) => createRipple(e)}
           className="relative group inline-flex items-center gap-3 px-8 py-4 tracking-wide rounded-sm shrink-0 ml-auto bg-black text-white text-4xl font-medium font-display uppercase hover:bg-neutral-800 hover:scale-105 active:scale-95 transition-all ripple-container"
         >
-          <span>EXPLORE MY WORK</span>
+          <span>{ctaLabel}</span>
           <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
         </a>
       </div>

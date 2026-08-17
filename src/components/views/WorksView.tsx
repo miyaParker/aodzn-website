@@ -7,8 +7,8 @@ import { ChevronDown } from 'lucide-react';
 import Navbar from '../Navbar';
 import Footer from '../Footer';
 import ContactModal from '../ContactModal';
-import { PROJECTS_DATA, WORK_TYPES, WORK_DOMAINS } from '../../data/portfolioData';
-import { Project } from '../../types';
+import { WORK_TYPES } from '../../data/portfolioData';
+import { HomePageContent, Project, SiteSettings } from '../../types';
 
 type TypeFilter = 'All' | Project['type'];
 type DomainFilter = 'All' | string;
@@ -61,22 +61,32 @@ function FilterDropdown<T extends string>({
   );
 }
 
-export default function WorksView() {
+interface WorksViewProps {
+  siteSettings: SiteSettings;
+  footerCta: HomePageContent['footerCta'];
+  contactModalContent: HomePageContent['contactModal'];
+  projects: Project[];
+}
+
+export default function WorksView({ siteSettings, footerCta, contactModalContent, projects }: WorksViewProps) {
   const [typeFilter, setTypeFilter] = useState<TypeFilter>('All');
   const [domainFilter, setDomainFilter] = useState<DomainFilter>('All');
   const [contactOpen, setContactOpen] = useState(false);
 
+  const domains = useMemo(() => Array.from(new Set(projects.map((p) => p.domain))), [projects]);
+
   const filteredProjects = useMemo(() => {
-    return PROJECTS_DATA.filter((p) => {
+    return projects.filter((p) => {
       if (typeFilter !== 'All' && p.type !== typeFilter) return false;
       if (domainFilter !== 'All' && p.domain !== domainFilter) return false;
       return true;
     });
-  }, [typeFilter, domainFilter]);
+  }, [projects, typeFilter, domainFilter]);
 
   return (
     <div className="relative min-h-screen bg-[#FFFFFF] text-[#111111] antialiased selection:bg-black selection:text-white">
       <Navbar
+        siteSettings={siteSettings}
         onOpenContact={() => setContactOpen(true)}
         onOpenShowreel={() => {}}
       />
@@ -98,7 +108,7 @@ export default function WorksView() {
             <FilterDropdown
               label="Domain"
               value={domainFilter}
-              options={['All', ...WORK_DOMAINS]}
+              options={['All', ...domains]}
               onChange={setDomainFilter}
             />
           </div>
@@ -146,11 +156,13 @@ export default function WorksView() {
         </div>
       </main>
 
-      <Footer onOpenContact={() => setContactOpen(true)} />
+      <Footer siteSettings={siteSettings} footerCta={footerCta} onOpenContact={() => setContactOpen(true)} />
 
       <ContactModal
         isOpen={contactOpen}
         onClose={() => setContactOpen(false)}
+        content={contactModalContent}
+        projectContactEmail={siteSettings.projectContactEmail}
       />
     </div>
   );

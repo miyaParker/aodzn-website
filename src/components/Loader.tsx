@@ -3,16 +3,18 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { heroVideoReady } from '../lib/heroVideoReady';
+import { HomePageContent } from '../types';
 
-const WORDS = ['REDEFINE', 'BRANDS', 'DIGITAL'];
-const BG_WORDS = ['PRODUCT', 'DESIGN', 'PROTOTYPE', 'RESEARCH'];
 const bgRowText = (word: string) => Array.from({ length: 6 }, () => word).join(' ');
 const BG_ROWS = 12;
+// Falls back to a single static word if the CMS field is empty, so the
+// cycling/marquee animations always have something to render.
+const FALLBACK_WORDS = ['AODZN'];
 
 // Owns its own interval/state so the frequent re-renders driven by the
 // progress bar (elsewhere in Loader) can't interrupt its enter/exit
 // transitions mid-flight.
-function CyclingWord({ active }: { active: boolean }) {
+function CyclingWord({ words, active }: { words: string[]; active: boolean }) {
   const [wordIndex, setWordIndex] = useState(0);
 
   // mode="wait" runs exit (220ms) then enter (220ms) sequentially, so the
@@ -21,12 +23,12 @@ function CyclingWord({ active }: { active: boolean }) {
   useEffect(() => {
     if (!active) return;
     const timer = window.setInterval(() => {
-      setWordIndex((i) => (i + 1) % WORDS.length);
+      setWordIndex((i) => (i + 1) % words.length);
     }, 600);
     return () => window.clearInterval(timer);
-  }, [active]);
+  }, [active, words.length]);
 
-  const word = active ? WORDS[wordIndex] : WORDS[0];
+  const word = active ? words[wordIndex] : words[0];
 
   return (
     <div className="overflow-hidden h-[1.3em] flex items-center text-[13vw] sm:text-6xl md:text-[160px]">
@@ -63,10 +65,17 @@ function ProgressBar({ progress }: { progress: number }) {
   );
 }
 
-export default function Loader({ onComplete }: { onComplete?: () => void }) {
+interface LoaderProps {
+  content: HomePageContent['loader'];
+  onComplete?: () => void;
+}
+
+export default function Loader({ content, onComplete }: LoaderProps) {
   const [progress, setProgress] = useState(0);
   const [done, setDone] = useState(false);
   const [cycling, setCycling] = useState(true);
+  const cyclingWords = content.cyclingWords?.length ? content.cyclingWords : FALLBACK_WORDS;
+  const backgroundWords = content.backgroundWords?.length ? content.backgroundWords : FALLBACK_WORDS;
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -140,7 +149,7 @@ export default function Loader({ onComplete }: { onComplete?: () => void }) {
           {/* Tiled background word texture */}
           <div className="absolute inset-0 flex flex-col justify-center gap-2 select-none pointer-events-none" aria-hidden="true">
             {Array.from({ length: BG_ROWS }).map((_, row) => {
-              const rowText = bgRowText(BG_WORDS[row % BG_WORDS.length]);
+              const rowText = bgRowText(backgroundWords[row % backgroundWords.length]);
               return (
                 <div key={row} className="overflow-hidden shrink-0" style={{ height: '9vw', minHeight: 72 }}>
                   <motion.div
@@ -159,7 +168,7 @@ export default function Loader({ onComplete }: { onComplete?: () => void }) {
 
           {/* Center content */}
           <div className="relative z-10 flex flex-col items-center px-6 w-full max-w-2xl">
-            <CyclingWord active={cycling} />
+            <CyclingWord words={cyclingWords} active={cycling} />
             <ProgressBar progress={progress} />
           </div>
         </motion.div>

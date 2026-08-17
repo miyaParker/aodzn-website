@@ -4,18 +4,24 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Send, CheckCircle2, Sparkles } from 'lucide-react';
 import { createRipple } from '../lib/animations';
+import { HomePageContent, SiteSettings } from '../types';
 
 interface ContactModalProps {
   isOpen: boolean;
   onClose: () => void;
+  content: HomePageContent['contactModal'];
+  projectContactEmail: SiteSettings['projectContactEmail'];
 }
 
-export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
+export default function ContactModal({ isOpen, onClose, content, projectContactEmail }: ContactModalProps) {
+  const projectTypes = content.projectTypes;
+  const budgets = content.budgets;
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    projectType: 'Mobile App',
-    budget: '$15k - $30k',
+    projectType: projectTypes[0] ?? '',
+    budget: budgets[0] ?? '',
     message: '',
   });
 
@@ -34,9 +40,6 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       }, 2500);
     }, 500);
   };
-
-  const projectTypes = ['Mobile App', 'Design System', 'Full Product UI/UX', 'Strategy & Audit'];
-  const budgets = ['$10k - $20k', '$20k - $40k', '$40k - $80k', '$80k+'];
 
   return (
     <AnimatePresence>
@@ -70,25 +73,25 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 <CheckCircle2 className="w-10 h-10" />
               </div>
               <h3 className="text-3xl font-display font-medium uppercase text-black">
-                MESSAGE SENT SUCCESSFULLY!
+                {content.successHeading}
               </h3>
               <p className="text-sm text-neutral-600 font-medium max-w-md mx-auto">
-                Thank you, {formData.name || 'friend'}. Abdulazees will review your project brief and respond within 24 hours.
+                Thank you, {formData.name || 'friend'}. {content.successMessage}
               </p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
                 <span className="px-3 py-1 rounded-sm bg-[#04a3cc]/10 text-[#04a3cc] text-[11px] font-mono font-bold uppercase tracking-wider">
-                  START A CONVERSATION
+                  {content.eyebrow}
                 </span>
                 <h3 className="text-3xl font-display font-medium uppercase text-black">
-                  LET'S DISCUSS YOUR PROJECT
+                  {content.heading}
                 </h3>
                 <p className="text-xs text-neutral-500 font-medium">
-                  Fill out the quick brief below or email directly at{' '}
-                  <a href="mailto:abdulazees@aodzn.com" className="text-black font-bold underline">
-                    abdulazees@aodzn.com
+                  {content.introText}{' '}
+                  <a href={`mailto:${projectContactEmail}`} className="text-black font-bold underline">
+                    {projectContactEmail}
                   </a>
                 </p>
               </div>
@@ -96,7 +99,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
               {/* Project Type Picker */}
               <div className="space-y-2">
                 <label className="text-xs font-mono font-bold uppercase text-neutral-500">
-                  Project Scope / Type
+                  {content.projectScopeLabel}
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   {projectTypes.map((type) => (
@@ -119,7 +122,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
               {/* Budget Range Picker */}
               <div className="space-y-2">
                 <label className="text-xs font-mono font-bold uppercase text-neutral-500">
-                  Target Budget (USD)
+                  {content.budgetLabel}
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {budgets.map((b) => (
@@ -143,12 +146,12 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="text-[11px] font-mono font-bold uppercase text-neutral-500">
-                    Your Name
+                    {content.nameLabel}
                   </label>
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Alex Morgan"
+                    placeholder={content.namePlaceholder}
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="w-full px-4 py-3 rounded-sm bg-[#F6F6F4] border border-black/10 focus:outline-none focus:border-black text-xs font-medium"
@@ -157,12 +160,12 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
                 <div className="space-y-1">
                   <label className="text-[11px] font-mono font-bold uppercase text-neutral-500">
-                    Your Email
+                    {content.emailLabel}
                   </label>
                   <input
                     type="email"
                     required
-                    placeholder="alex@company.com"
+                    placeholder={content.emailPlaceholder}
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="w-full px-4 py-3 rounded-sm bg-[#F6F6F4] border border-black/10 focus:outline-none focus:border-black text-xs font-medium"
@@ -172,12 +175,12 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
               <div className="space-y-1">
                 <label className="text-[11px] font-mono font-bold uppercase text-neutral-500">
-                  Project Overview & Timeline
+                  {content.messageLabel}
                 </label>
                 <textarea
                   rows={3}
                   required
-                  placeholder="Tell us about your product goals, target launch date, or key challenges..."
+                  placeholder={content.messagePlaceholder}
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   className="w-full px-4 py-3 rounded-sm bg-[#F6F6F4] border border-black/10 focus:outline-none focus:border-black text-xs font-medium resize-none"
@@ -189,7 +192,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 onClick={(e) => createRipple(e)}
                 className="w-full py-4 rounded-sm bg-black text-white text-xs font-bold uppercase tracking-widest hover:bg-neutral-800 transition-all flex items-center justify-center gap-2 ripple-container"
               >
-                <span>SEND INQUIRY</span>
+                <span>{content.submitLabel}</span>
                 <Send className="w-4 h-4" />
               </button>
             </form>

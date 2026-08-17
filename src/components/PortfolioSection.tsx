@@ -3,9 +3,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
 import Link from 'next/link';
-import { PROJECTS_DATA } from '../data/portfolioData';
 import PortfolioCard, { PortfolioClientTag } from './PortfolioCard';
-import { Project } from '../types';
+import { HomePageContent, Project } from '../types';
 
 const EASE = [0.76, 0, 0.24, 1] as const;
 
@@ -18,7 +17,12 @@ const VH_PER_PROJECT = 100;
 // laggy since the incoming image is already most of the way into view.
 const ACTIVATE_AT = 0.7;
 
-export default function PortfolioSection() {
+interface PortfolioSectionProps {
+  projects: Project[];
+  content: HomePageContent['portfolioSection'];
+}
+
+export default function PortfolioSection({ projects, content }: PortfolioSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -76,8 +80,8 @@ export default function PortfolioSection() {
     };
   }, []);
 
-  const totalScrollVh = introVh + (PROJECTS_DATA.length - 1) * VH_PER_PROJECT + ctaVh;
-  const sectionHeightVh = introVh + PROJECTS_DATA.length * VH_PER_PROJECT + ctaVh;
+  const totalScrollVh = introVh + (projects.length - 1) * VH_PER_PROJECT + ctaVh;
+  const sectionHeightVh = introVh + projects.length * VH_PER_PROJECT + ctaVh;
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -87,27 +91,31 @@ export default function PortfolioSection() {
   useMotionValueEvent(scrollYProgress, 'change', (v) => {
     const scrolledPastIntro = v * totalScrollVh - introVh;
     const idx = Math.floor((scrolledPastIntro - VH_PER_PROJECT * ACTIVATE_AT) / VH_PER_PROJECT) + 1;
-    setActiveIndex(Math.min(PROJECTS_DATA.length - 1, Math.max(0, idx)));
+    setActiveIndex(Math.min(projects.length - 1, Math.max(0, idx)));
   });
 
   const rawY = useTransform(scrollYProgress, [0, 1], [0, -totalScrollVh]);
   const filmstripY = useTransform(rawY, (v) => `${v}vh`);
 
-  const activeProject = PROJECTS_DATA[activeIndex];
+  const activeProject = projects[activeIndex];
 
   return (
     <section
       id="work"
       ref={sectionRef}
-      className="relative w-full bg-black border-t"
+      className="relative w-full bg-white text-black border-t"
       style={{ height: `${sectionHeightVh}vh`, borderColor: '#737373' }}
     >
       {/* Desktop: sticky-left / scroll-synced-right scrollytelling */}
       <div className="hidden lg:block sticky top-0 h-screen w-full overflow-hidden">
         <div className="grid grid-cols-12 h-full">
-          <div className="col-span-4 h-full relative px-8 xl:pl-16 xl:pr-12 z-10 bg-black">
+          <div className="col-span-4 h-full relative px-8 xl:pl-16 xl:pr-12 z-10 bg-white">
             <div className="absolute top-10 left-8 xl:left-16">
-              <p className="text-sm text-neutral-400 uppercase tracking-widest overflow-hidden">
+              
+            </div>
+
+            <div className="h-full flex flex-col justify-center gap-6 relative">
+            <p className="text-md text-neutral-500 font-bold uppercase tracking-wider overflow-hidden mb-4">
                 <motion.span
                   className="block"
                   initial={{ y: '100%', opacity: 0 }}
@@ -115,33 +123,31 @@ export default function PortfolioSection() {
                   viewport={{ once: true, amount: 0 }}
                   transition={{ duration: 0.7, ease: EASE }}
                 >
-                  Featured Works
+                  {content.eyebrowLabel}
                 </motion.span>
               </p>
-            </div>
-
-            <div className="h-full flex flex-col justify-center gap-6 relative">
               <PortfolioCard project={activeProject} />
             </div>
 
             <div className="absolute bottom-10 left-8 xl:left-16">
-              <PortfolioClientTag project={activeProject} />
+              <PortfolioClientTag project={activeProject} clientLabel={content.clientLabel} />
             </div>
           </div>
 
           <div className="col-span-8 h-full relative overflow-hidden">
             <motion.div style={{ y: filmstripY }} className="flex flex-col">
               <div ref={introRef} className="w-full px-8 xl:px-16 py-16">
-                <p className="text-xl sm:text-2xl xl:text-3xl text-neutral-300 leading-[140%] tracking-tight max-w-3xl">
-                  A selection of recent work — real products shipped to real users, not concepts sitting in a deck.
+                <p className="text-xl sm:text-2xl xl:text-3xl text-neutral-600 leading-[140%] tracking-tight max-w-3xl">
+                  {content.introText}
                 </p>
               </div>
-              {PROJECTS_DATA.map((project) => (
+              {projects.map((project) => (
                 <ImageFrame
                   key={project.id}
                   project={project}
                   className="h-screen"
                   isActive={project.id === activeProject.id}
+                  caseStudyCtaLabel={content.caseStudyCtaLabel}
                 />
               ))}
             </motion.div>
@@ -152,7 +158,7 @@ export default function PortfolioSection() {
       {/* Mobile / tablet: plain stacked fallback, no scroll-jacking */}
       <div className="lg:hidden">
         <div className="px-4 sm:px-6 py-16">
-          <p className="text-sm text-neutral-400 uppercase tracking-widest overflow-hidden">
+          <p className="text-sm text-neutral-500 uppercase tracking-widest overflow-hidden">
             <motion.span
               className="block"
               initial={{ y: '100%', opacity: 0 }}
@@ -160,21 +166,22 @@ export default function PortfolioSection() {
               viewport={{ once: true, amount: 0 }}
               transition={{ duration: 0.7, ease: EASE }}
             >
-              Featured Works
+              {content.eyebrowLabel}
             </motion.span>
           </p>
         </div>
-        <div className="divide-y divide-white/10 border-t border-white/10">
-          {PROJECTS_DATA.map((project) => (
+        <div className="divide-y divide-black/10 border-t border-black/10">
+          {projects.map((project) => (
             <div key={project.id} className="flex flex-col">
               <div className="px-4 sm:px-6 py-16 flex flex-col gap-8">
                 <PortfolioCard project={project} />
-                <PortfolioClientTag project={project} />
+                <PortfolioClientTag project={project} clientLabel={content.clientLabel} />
               </div>
               <ImageFrame
                 project={project}
                 className="h-[360px] sm:h-[460px]"
                 isActive
+                caseStudyCtaLabel={content.caseStudyCtaLabel}
               />
             </div>
           ))}
@@ -184,7 +191,7 @@ export default function PortfolioSection() {
             onClick={() => document.querySelector('#work')?.scrollIntoView({ behavior: 'smooth' })}
             className="w-full py-5 rounded-sm bg-[#04a3cc] text-black text-sm font-bold uppercase tracking-widest hover:brightness-110 transition-all"
           >
-            View All Works
+            {content.viewAllLabel}
           </button>
         </div>
       </div>
@@ -196,33 +203,37 @@ function ImageFrame({
   project,
   className = '',
   isActive,
+  caseStudyCtaLabel,
 }: {
   project: Project;
   className?: string;
   isActive: boolean;
+  caseStudyCtaLabel: string;
 }) {
   const initials = project.client.charAt(0).toUpperCase();
 
   return (
     <Link
       href={`/works/${project.id}`}
-      aria-label={`View ${project.title} case study`}
+      aria-label={`${caseStudyCtaLabel}: ${project.title}`}
       data-cursor="view"
-      data-cursor-text="VIEW CASE STUDY"
-      className={`relative w-full overflow-hidden bg-neutral-950 cursor-pointer p-2 block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white ${className}`}
+      data-cursor-text={caseStudyCtaLabel}
+      className={`relative w-full overflow-hidden cursor-pointer p-2 block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white ${className}`}
     >
       <div className="relative w-full h-full rounded-sm overflow-hidden">
-        <motion.img
-          src={project.image}
-          alt={`${project.title} project preview`}
-          loading="lazy"
-          className="absolute inset-0 w-full h-full object-cover"
-          animate={{
-            filter: isActive ? 'blur(0px) brightness(1)' : 'blur(24px) brightness(0.25)',
-            scale: isActive ? 1 : 1.1,
-          }}
-          transition={{ duration: 0.3, ease: [0.25, 1, 0.5, 1] }}
-        />
+        {project.image && (
+          <motion.img
+            src={project.image}
+            alt={`${project.title} project preview`}
+            loading="lazy"
+            className="absolute inset-0 w-full h-full object-cover"
+            animate={{
+              filter: isActive ? 'blur(0px) brightness(1)' : 'blur(24px) brightness(0.25)',
+              scale: isActive ? 1 : 1.1,
+            }}
+            transition={{ duration: 0.3, ease: [0.25, 1, 0.5, 1] }}
+          />
+        )}
         <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/10 to-black/30 pointer-events-none" />
 
         <div className="absolute inset-0 flex items-center justify-center gap-3 sm:gap-4 px-6">

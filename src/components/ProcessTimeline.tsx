@@ -2,33 +2,22 @@
 
 import React from 'react';
 import { motion } from 'motion/react';
-const managerDeskIllustration = '/assets/illustrations/define.png';
-const partnershipIllustration = '/assets/illustrations/design.png';
-const problemSolving1Illustration = '/assets/illustrations/deliver.png';
+import { HomePageContent } from '../types';
 
 const EASE = [0.76, 0, 0.24, 1] as const;
 
-const ILLUSTRATIONS = [
-  managerDeskIllustration,
-  partnershipIllustration
-  ,
-  problemSolving1Illustration,
-];
+interface ProcessTimelineProps {
+  content: HomePageContent['processTimeline'];
+  isDark: boolean;
+}
 
-const HEADING_LINES = [
-  'FROM IMAGINATION TO EXPERIENCES ',
-  'PEOPLE CAN USE, AND FEEL,',
-  'SHAPED AROUND THE WAY THEY LIVE.',
-];
-
-export default function ProcessTimeline() {
+export default function ProcessTimeline({ content, isDark }: ProcessTimelineProps) {
   return (
     <section id="process" className="min-h-screen w-full px-4 sm:px-6 lg:px-8 pt-16 flex flex-col">
       {/* Subhead */}
       <div className="text-center space-y-3">
-        <h2 className="text-5xl sm:text-7xl lg:text-8xl font-display font-medium text-black max-w-4Designing the future
-of digital productsxl mx-auto leading-[0.9] tracking uppercase">
-          {HEADING_LINES.map((line, i) => (
+        <h2 className="text-5xl sm:text-7xl lg:text-8xl font-display font-medium text-black max-w-4xl mx-auto leading-[0.9] tracking uppercase">
+          {content.headingLines.map((line, i) => (
             <span key={line} className="block overflow-hidden">
               <motion.span
                 className="block"
@@ -47,7 +36,7 @@ of digital productsxl mx-auto leading-[0.9] tracking uppercase">
       {/* Illustrations */}
       <div className="flex-1 flex items-center mt-12 sm:mt-16">
         <div className="w-full flex justify-center gap-24 items-stretch">
-          {ILLUSTRATIONS.map((illustration, index) => (
+          {content.illustrations.map((illustration, index) => (
             <motion.div
               key={illustration}
               initial={{ opacity: 0, y: 30 }}
@@ -56,7 +45,11 @@ of digital productsxl mx-auto leading-[0.9] tracking uppercase">
               transition={{ duration: 0.6, delay: index * 0.1 }}
               className="flex items-center justify-center"
             >
-              <img src={illustration} alt="" className="w-40 sm:w-56 lg:w-64 h-auto" />
+              <img
+                src={illustration}
+                alt=""
+                className={`w-40 sm:w-56 lg:w-64 h-auto transition-[filter] duration-300 ${isDark ? 'invert' : ''}`}
+              />
             </motion.div>
           ))}
         </div>

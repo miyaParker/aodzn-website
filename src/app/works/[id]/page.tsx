@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import CaseStudyView from '../../../components/views/CaseStudyView';
-import { PROJECTS_DATA } from '../../../data/portfolioData';
+import { getHomePage, getProjectBySlug, getProjectSlugs, getSiteSettings } from '../../../sanity/lib/fetch';
 
-export function generateStaticParams() {
-  return PROJECTS_DATA.map((project) => ({ id: project.id }));
+export async function generateStaticParams() {
+  const slugs = await getProjectSlugs();
+  return slugs.map(({ id }) => ({ id }));
 }
 
 export async function generateMetadata({
@@ -13,7 +14,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const project = PROJECTS_DATA.find((p) => p.id === id);
+  const project = await getProjectBySlug(id);
 
   if (!project) return {};
 
@@ -29,9 +30,20 @@ export default async function Page({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const project = PROJECTS_DATA.find((p) => p.id === id);
+  const [project, siteSettings, homePage] = await Promise.all([
+    getProjectBySlug(id),
+    getSiteSettings(),
+    getHomePage(),
+  ]);
 
   if (!project) notFound();
 
-  return <CaseStudyView project={project} />;
+  return (
+    <CaseStudyView
+      project={project}
+      siteSettings={siteSettings}
+      footerCta={homePage.footerCta}
+      contactModalContent={homePage.contactModal}
+    />
+  );
 }

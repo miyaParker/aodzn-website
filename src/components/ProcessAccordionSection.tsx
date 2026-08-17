@@ -2,64 +2,9 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { HomePageContent, ProcessStepContent } from '../types';
 
 const EASE = [0.76, 0, 0.24, 1] as const;
-
-interface Step {
-  number: string;
-  title: string;
-  description: string;
-  phase: string;
-  gradient: string;
-}
-
-const STEPS: Step[] = [
-  {
-    number: '01',
-    title: 'You say what it is for.',
-    description:
-      'What the site has to do, who lands on it, and what you need them to do once they are there. If the brief is thin I will make a call and tell you what I decided.',
-    phase: 'DEFINE',
-    gradient:
-      'radial-gradient(120% 120% at 20% 15%, #04a3cc 0%, transparent 55%), radial-gradient(90% 90% at 85% 85%, #67e8f9 0%, transparent 45%), linear-gradient(160deg, #042f3d, #01141a 70%)',
-  },
-  {
-    number: '02',
-    title: 'The look comes out of your world, not a style menu.',
-    description:
-      'Every trade has its own materials, documents and habits. Those are where the design comes from, which is why it cannot be pasted onto a competitor without anyone noticing.',
-    phase: 'DESIGN',
-    gradient:
-      'radial-gradient(120% 120% at 20% 15%, #38bdf8 0%, transparent 55%), radial-gradient(90% 90% at 85% 85%, #a78bfa 0%, transparent 45%), linear-gradient(160deg, #0c1a3d, #0a0a1a 70%)',
-  },
-  {
-    number: '03',
-    title: 'You pick one direction, and we stop debating.',
-    description:
-      "I show two or three real routes, not ten half-finished ones. You choose here, and that choice becomes the spine for everything that follows.",
-    phase: 'DECIDE',
-    gradient:
-      'radial-gradient(120% 120% at 20% 15%, #22d3ee 0%, transparent 55%), radial-gradient(90% 90% at 85% 85%, #c084fc 0%, transparent 45%), linear-gradient(160deg, #0f172a, #030712 70%)',
-  },
-  {
-    number: '04',
-    title: 'I build it where you can see it.',
-    description:
-      "Working pages replace static mockups as early as possible, so what you're approving is what visitors will actually use. Changes from here are refinements, not rewrites.",
-    phase: 'BUILD',
-    gradient:
-      'radial-gradient(120% 120% at 20% 15%, #04a3cc 0%, transparent 55%), radial-gradient(90% 90% at 85% 85%, #fbbf24 0%, transparent 45%), linear-gradient(160deg, #052e2e, #010a0a 70%)',
-  },
-  {
-    number: '05',
-    title: 'It ships, and I stick around.',
-    description:
-      'Launch is not the finish line. I watch how it performs for the first few weeks and fix whatever the data says needs fixing.',
-    phase: 'LAUNCH',
-    gradient:
-      'radial-gradient(120% 120% at 20% 15%, #22d3ee 0%, transparent 55%), radial-gradient(90% 90% at 85% 85%, #34d399 0%, transparent 45%), linear-gradient(160deg, #052a1e, #01100b 70%)',
-  },
-];
 
 const ACCENT = '#04a3cc';
 const NEUTRAL = '#737373'; // Tailwind neutral-500
@@ -85,7 +30,12 @@ const PREVIEW_HEIGHT = 200;
 const PREVIEW_WIDTH_MIN = 180;
 const PREVIEW_WIDTH_MAX = 280;
 
-export default function ProcessAccordionSection() {
+interface ProcessAccordionSectionProps {
+  steps: ProcessStepContent[];
+  content: HomePageContent['processSection'];
+}
+
+export default function ProcessAccordionSection({ steps, content }: ProcessAccordionSectionProps) {
   const [active, setActive] = useState(0);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -118,18 +68,20 @@ export default function ProcessAccordionSection() {
   }, []);
 
   return (
-    <section id="process-accordion" className="relative w-full bg-black text-white">
+    <section id="process-accordion" className="relative w-full bg-white text-black">
       <div className="px-6 sm:px-10 lg:px-16 pt-24 sm:pt-32 pb-10 sm:pb-14">
-        <motion.p
-          className="text-sm text-neutral-400 uppercase tracking-widest mb-6"
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '0px 0px -10% 0px' }}
-          transition={{ duration: 0.6, ease: EASE }}
-        >
-          My Process
-        </motion.p>
-        <h2 className="font-display text-5xl sm:text-6xl lg:text-7xl leading-[1.05] max-w-3xl uppercase">
+      <p className="text-md text-neutral-500 font-bold uppercase tracking-wider overflow-hidden mb-4">
+                <motion.span
+                  className="block"
+                  initial={{ y: '100%', opacity: 0 }}
+                  whileInView={{ y: '0%', opacity: 1 }}
+                  viewport={{ once: true, amount: 0 }}
+                  transition={{ duration: 0.7, ease: EASE }}
+                >
+                  {content.eyebrowLabel}
+                </motion.span>
+              </p>
+        <h2 className="font-display font-medium text-5xl sm:text-6xl lg:text-7xl leading-[1.05] max-w-3xl uppercase">
           <span className="block overflow-hidden">
             <motion.span
               className="block"
@@ -138,13 +90,13 @@ export default function ProcessAccordionSection() {
               viewport={{ once: true, margin: '0px 0px -10% 0px' }}
               transition={{ duration: 0.9, ease: EASE }}
             >
-              Five steps, and you decide at the third.
+              {content.heading}
             </motion.span>
           </span>
         </h2>
       </div>
 
-      {STEPS.map((step, i) => {
+      {steps.map((step, i) => {
         const isActive = i === active;
         return (
           <StepCard
@@ -176,7 +128,7 @@ function StepCard({
   zIndex,
   peekOffset,
 }: {
-  step: Step;
+  step: ProcessStepContent;
   isActive: boolean;
   cardRef: (el: HTMLDivElement | null) => void;
   top: number;
@@ -213,7 +165,7 @@ function StepCard({
       }}
       onMouseEnter={showPreview}
       onMouseLeave={hidePreview}
-      className="relative sticky bg-black"
+      className="relative sticky bg-white"
       style={{ top, zIndex, minHeight: ROW_MIN_HEIGHT }}
     >
       {/* Countering this card's own PEEK offset here means every card's
@@ -231,7 +183,7 @@ function StepCard({
           aria-hidden="true"
           className="absolute inset-0 opacity-[0.06] pointer-events-none"
           style={{
-            backgroundImage: 'radial-gradient(rgba(255,255,255,0.8) 1px, transparent 1px)',
+            backgroundImage: 'radial-gradient(rgba(17,17,17,0.8) 1px, transparent 1px)',
             backgroundSize: '14px 14px',
           }}
         />

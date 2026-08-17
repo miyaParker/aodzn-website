@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Navbar from '../Navbar';
 import Footer from '../Footer';
 import ContactModal from '../ContactModal';
-import { Project } from '../../types';
+import { HomePageContent, Project, SiteSettings } from '../../types';
 
 // Tints a project's brand hex for use as a section background — keeps every
 // color block on the page tied to that project's own palette instead of a
@@ -76,7 +76,19 @@ function GallerySlideshow({ images, alt, className }: { images: string[]; alt: s
   );
 }
 
-export default function CaseStudyView({ project }: { project: Project }) {
+interface CaseStudyViewProps {
+  project: Project;
+  siteSettings: SiteSettings;
+  footerCta: HomePageContent['footerCta'];
+  contactModalContent: HomePageContent['contactModal'];
+}
+
+export default function CaseStudyView({
+  project,
+  siteSettings,
+  footerCta,
+  contactModalContent,
+}: CaseStudyViewProps) {
   const [contactOpen, setContactOpen] = useState(false);
 
   const { caseStudy: cs, primaryColor, accentColor } = project;
@@ -89,15 +101,30 @@ export default function CaseStudyView({ project }: { project: Project }) {
   const nextImg = () => cs.gallery[imgCursor++ % cs.gallery.length];
   const galleryAlt = `${project.title} case study visual`;
 
+  // Mirrors the page's own section headings rather than the homepage's
+  // #home/#work/#about — the sections a case study page actually has.
+  const caseStudyNavItems = [
+    { label: 'Overview', href: '#overview' },
+    { label: 'Challenge', href: '#challenge' },
+    { label: 'Solution', href: '#solution' },
+    { label: 'Impact', href: '#impact' },
+  ];
+
   return (
     <div className="relative min-h-screen bg-white text-[#111111] antialiased selection:bg-black selection:text-white">
-      <Navbar onOpenContact={() => setContactOpen(true)} onOpenShowreel={() => {}} />
+      <Navbar
+        siteSettings={siteSettings}
+        navItems={caseStudyNavItems}
+        onOpenContact={() => setContactOpen(true)}
+        onOpenShowreel={() => {}}
+      />
 
       <main className="relative z-10">
         {/* Hero: full-bleed dark banner with the project wordmark and
             Sector/Year meta pinned top-left/top-right above a huge white
             headline, matching the reference banner exactly. */}
         <section
+          id="overview"
           className="relative pt-36 sm:pt-44 pb-16 sm:pb-20 px-8 xl:px-16 overflow-hidden"
           style={{ backgroundColor: accentColor }}
         >
@@ -135,7 +162,7 @@ export default function CaseStudyView({ project }: { project: Project }) {
 
         {/* The Challenge: left column pins in place while the right
             column's image/paragraph stack scrolls past it. */}
-        <section className="lg:grid lg:grid-cols-2">
+        <section id="challenge" className="lg:grid lg:grid-cols-2">
           <div
             className="lg:sticky lg:top-0 lg:h-screen flex flex-col"
             style={{ backgroundColor: tint(primaryColor, 0.08) }}
@@ -224,7 +251,7 @@ export default function CaseStudyView({ project }: { project: Project }) {
 
         {/* Our Solution: same sticky-left / scrolling-right composition as
             The Challenge, just carrying the solution's own copy. */}
-        <section className="lg:grid lg:grid-cols-2">
+        <section id="solution" className="lg:grid lg:grid-cols-2">
           <div
             className="lg:sticky lg:top-0 lg:h-screen flex flex-col"
             style={{ backgroundColor: tint(primaryColor, 0.08) }}
@@ -304,7 +331,7 @@ export default function CaseStudyView({ project }: { project: Project }) {
         {/* The Impact: closes the page out with the growth narrative —
             headline plus copy, full-width, no sticky two-column composition
             like Challenge/Solution. */}
-        <section className="pt-12 pb-24 sm:pt-16 sm:pb-32 px-8 xl:px-16" style={{ backgroundColor: accentColor }}>
+        <section id="impact" className="pt-12 pb-24 sm:pt-16 sm:pb-32 px-8 xl:px-16" style={{ backgroundColor: accentColor }}>
           <div className="max-w-3xl mx-auto text-center">
             <Reveal>
               <span className="text-xs font-bold uppercase tracking-widest" style={{ color: ink(accentColor, 0.6) }}>The Impact</span>
@@ -330,9 +357,14 @@ export default function CaseStudyView({ project }: { project: Project }) {
 
       </main>
 
-      <Footer onOpenContact={() => setContactOpen(true)} />
+      <Footer siteSettings={siteSettings} footerCta={footerCta} onOpenContact={() => setContactOpen(true)} />
 
-      <ContactModal isOpen={contactOpen} onClose={() => setContactOpen(false)} />
+      <ContactModal
+        isOpen={contactOpen}
+        onClose={() => setContactOpen(false)}
+        content={contactModalContent}
+        projectContactEmail={siteSettings.projectContactEmail}
+      />
     </div>
   );
 }
