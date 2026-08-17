@@ -38,16 +38,6 @@ export interface Project {
   };
 }
 
-export interface ProcessStep {
-  number: number;
-  id: string;
-  title: string;
-  description: string;
-  detail: string;
-  deliverables: string[];
-  icon: 'understand' | 'design' | 'build' | 'launch' | 'impact';
-}
-
 export type CursorMode = 'default' | 'hover' | 'drag' | 'view' | 'video' | 'hidden';
 
 export interface JournalArticle {
