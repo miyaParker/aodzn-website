@@ -8,10 +8,9 @@ const EASE = [0.76, 0, 0.24, 1] as const;
 
 interface ProcessTimelineProps {
   content: HomePageContent['processTimeline'];
-  isDark: boolean;
 }
 
-export default function ProcessTimeline({ content, isDark }: ProcessTimelineProps) {
+export default function ProcessTimeline({ content }: ProcessTimelineProps) {
   return (
     <section id="process" className="min-h-screen w-full px-4 sm:px-6 lg:px-8 pt-16 flex flex-col">
       {/* Subhead */}
@@ -48,7 +47,7 @@ export default function ProcessTimeline({ content, isDark }: ProcessTimelineProp
               <img
                 src={illustration}
                 alt=""
-                className={`w-40 sm:w-56 lg:w-64 h-auto transition-[filter] duration-300 ${isDark ? 'invert' : ''}`}
+                className="w-40 sm:w-56 lg:w-64 h-auto"
               />
             </motion.div>
           ))}

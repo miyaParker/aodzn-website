@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Loader from '../Loader';
 import Navbar from '../Navbar';
 import Hero from '../Hero';
@@ -44,40 +44,8 @@ export default function HomeView({
   // instead of finishing silently underneath it.
   const [heroReady, setHeroReady] = useState(false);
 
-  // The process-accordion section onward is all dark content with no light
-  // section in between, so this is a one-way switch: rather than each dark
-  // section painting its own black backdrop (a hard cut at its edge), the
-  // page background itself crossfades to black once that section is almost
-  // in view, so the color change reads as a wash rather than a seam.
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    const section = document.getElementById('process-accordion');
-    if (!section) return;
-
-    let raf = 0;
-    const measure = () => {
-      raf = 0;
-      setIsDark(section.getBoundingClientRect().top <= window.innerHeight * 0.85);
-    };
-    const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(measure);
-    };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    measure();
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, []);
-
   return (
-    <div
-      className={`relative min-h-screen antialiased selection:bg-black selection:text-white ${
-        isDark ? 'bg-black text-white' : 'bg-[#FFFFFF] text-[#111111]'
-      }`}
-    >
+    <div className="relative min-h-screen antialiased selection:bg-black selection:text-white bg-[#FFFFFF] text-[#111111]">
       {/* Animated Loading Screen */}
       <Loader content={homePage.loader} onComplete={() => setHeroReady(true)} />
 
@@ -105,7 +73,7 @@ export default function HomeView({
           sticker={homePage.hero.sticker}
         />
 
-        <ProcessTimeline content={homePage.processTimeline} isDark={isDark} />
+        <ProcessTimeline content={homePage.processTimeline} />
 
         <StrategySection />
 

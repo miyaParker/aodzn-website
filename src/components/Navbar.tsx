@@ -92,6 +92,7 @@ export default function Navbar({ siteSettings, onOpenContact, onOpenShowreel, na
   // the viewport, so the pill follows scroll position, not just clicks.
   useEffect(() => {
     const sections = navItems
+      .filter((item) => item.href.startsWith('#'))
       .map((item) => document.querySelector(item.href))
       .filter((el): el is Element => el !== null);
     if (sections.length === 0) return;
@@ -127,8 +128,10 @@ export default function Navbar({ siteSettings, onOpenContact, onOpenShowreel, na
   // Nav items scroll in place on any page that owns the sections they point
   // at (home, and case study pages via their own navItems override) —
   // elsewhere they fall through to a real navigation back to the homepage.
+  // Items whose href is a real route (e.g. /works) rather than a #anchor
+  // always fall through to a normal navigation.
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    if (!scrollsInPage) return;
+    if (!href.startsWith('#') || !scrollsInPage) return;
     e.preventDefault();
     createRipple(e);
     const target = document.querySelector(href);
@@ -170,11 +173,14 @@ export default function Navbar({ siteSettings, onOpenContact, onOpenShowreel, na
               small gap between, sitting inside the darker parent pill. */}
           <nav className="hidden md:flex items-center gap-1 rounded-md bg-neutral-900 p-[0.2rem] text-xs tracking-normal font-bold capitalize">
             {navItems.map((item) => {
-              const isActive = activeSection === item.href.substring(1);
+              const isAnchor = item.href.startsWith('#');
+              const isActive = isAnchor
+                ? activeSection === item.href.substring(1)
+                : pathname?.startsWith(item.href);
               return (
                 <a
                   key={item.label}
-                  href={scrollsInPage ? item.href : `/${item.href}`}
+                  href={isAnchor ? (scrollsInPage ? item.href : `/${item.href}`) : item.href}
                   onClick={(e) => scrollToSection(e, item.href)}
                   className={`relative rounded-sm px-5 py-3 transition-colors duration-200 ${
                     isActive ? 'text-black' : 'bg-neutral-800 text-neutral-300 hover:text-white'
@@ -218,63 +224,72 @@ export default function Navbar({ siteSettings, onOpenContact, onOpenShowreel, na
             className="fixed inset-0 z-30 bg-[#F6F6F4] overflow-y-auto"
           >
             <div className="min-h-full flex flex-col px-6 sm:px-10 lg:px-16 pt-24 sm:pt-28 pb-8 sm:pb-10">
-              <nav className="border-t border-black/10">
-                {navItems.map((item, i) => {
-                  const isActive = activeSection === item.href.substring(1);
-                  return (
-                    <div key={item.label} className="overflow-hidden border-b border-black/10">
-                      <motion.a
-                        href={scrollsInPage ? item.href : `/${item.href}`}
-                        onClick={(e) => scrollToSection(e, item.href)}
-                        initial={{ y: '100%' }}
-                        animate={{ y: '0%' }}
-                        transition={{ duration: 0.6, delay: i * 0.05, ease: EASE }}
-                        className={`group flex items-center justify-between gap-6 py-4 sm:py-6 transition-colors duration-300 ${
-                          isActive ? 'text-[#04a3cc]' : 'text-black hover:text-[#04a3cc]'
-                        }`}
-                      >
-                        <span className="font-display font-medium uppercase leading-none tracking-tight text-6xl sm:text-7xl lg:text-8xl">
-                          {item.label}
-                        </span>
-                        <ArrowUpRight className="w-7 h-7 sm:w-9 sm:h-9 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
-                      </motion.a>
+              {/* On large screens the nav list and CTA column sit side by
+                  side and share the row's full height — the links settle to
+                  its bottom, the CTAs sit at its top — instead of the CTAs
+                  trailing below the full-height link stack. */}
+              <div className="flex-1 flex flex-col lg:flex-row lg:items-stretch gap-8 lg:gap-12 xl:gap-20">
+                <nav className="border-t border-black/10 lg:flex-1 flex flex-col lg:justify-end">
+                  {navItems.map((item, i) => {
+                    const isAnchor = item.href.startsWith('#');
+                    const isActive = isAnchor
+                      ? activeSection === item.href.substring(1)
+                      : pathname?.startsWith(item.href);
+                    return (
+                      <div key={item.label} className="overflow-hidden border-b border-black/10">
+                        <motion.a
+                          href={isAnchor ? (scrollsInPage ? item.href : `/${item.href}`) : item.href}
+                          onClick={(e) => scrollToSection(e, item.href)}
+                          initial={{ y: '100%' }}
+                          animate={{ y: '0%' }}
+                          transition={{ duration: 0.6, delay: i * 0.05, ease: EASE }}
+                          className={`group flex items-center justify-between gap-6 py-4 sm:py-6 transition-colors duration-300 ${
+                            isActive ? 'text-[#04a3cc]' : 'text-black hover:text-[#04a3cc]'
+                          }`}
+                        >
+                          <span className="font-display font-medium uppercase leading-none tracking-tight text-6xl sm:text-7xl lg:text-8xl">
+                            {item.label}
+                          </span>
+                          <ArrowUpRight className="w-7 h-7 sm:w-9 sm:h-9 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+                        </motion.a>
+                      </div>
+                    );
+                  })}
+                </nav>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-col lg:w-[380px] xl:w-[440px] lg:shrink-0 gap-4 sm:gap-6">
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      onOpenContact();
+                    }}
+                    className="group flex items-center justify-between gap-6 rounded-md bg-[#04a3cc] text-white px-6 sm:px-8 py-8 sm:py-10 text-left hover:brightness-105 transition-[filter]"
+                  >
+                    <div>
+                      <span className="block text-xs font-bold uppercase tracking-widest text-white/70 mb-3">Contact</span>
+                      <span className="block font-display font-medium uppercase text-3xl sm:text-4xl leading-[0.95]">
+                        {siteSettings.navbarCtaLabel}
+                      </span>
                     </div>
-                  );
-                })}
-              </nav>
+                    <ArrowUpRight className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+                  </button>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-6 sm:mt-8">
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    onOpenContact();
-                  }}
-                  className="group flex items-center justify-between gap-6 rounded-md bg-[#04a3cc] text-white px-6 sm:px-8 py-8 sm:py-10 text-left hover:brightness-105 transition-[filter]"
-                >
-                  <div>
-                    <span className="block text-xs font-bold uppercase tracking-widest text-white/70 mb-3">Contact</span>
-                    <span className="block font-display font-medium uppercase text-3xl sm:text-4xl leading-[0.95]">
-                      {siteSettings.navbarCtaLabel}
-                    </span>
-                  </div>
-                  <ArrowUpRight className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
-                </button>
-
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    onOpenShowreel();
-                  }}
-                  className="group flex items-center justify-between gap-6 rounded-md bg-white border border-black/10 text-black px-6 sm:px-8 py-8 sm:py-10 text-left hover:border-black/20 transition-colors"
-                >
-                  <div>
-                    <span className="block text-xs font-bold uppercase tracking-widest text-neutral-500 mb-3">Showreel</span>
-                    <span className="block font-display font-medium uppercase text-3xl sm:text-4xl leading-[0.95]">
-                      {siteSettings.navbarShowreelLabel}
-                    </span>
-                  </div>
-                  <Sparkles className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 text-[#04a3cc]" />
-                </button>
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      onOpenShowreel();
+                    }}
+                    className="group flex items-center justify-between gap-6 rounded-md bg-white border border-black/10 text-black px-6 sm:px-8 py-8 sm:py-10 text-left hover:border-black/20 transition-colors"
+                  >
+                    <div>
+                      <span className="block text-xs font-bold uppercase tracking-widest text-neutral-500 mb-3">Showreel</span>
+                      <span className="block font-display font-medium uppercase text-3xl sm:text-4xl leading-[0.95]">
+                        {siteSettings.navbarShowreelLabel}
+                      </span>
+                    </div>
+                    <Sparkles className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 text-[#04a3cc]" />
+                  </button>
+                </div>
               </div>
             </div>
           </motion.div>

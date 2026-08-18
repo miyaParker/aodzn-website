@@ -111,10 +111,6 @@ export default function PortfolioSection({ projects, content }: PortfolioSection
         <div className="grid grid-cols-12 h-full">
           <div className="col-span-4 h-full relative px-8 xl:pl-16 xl:pr-12 z-10 bg-white">
             <div className="absolute top-10 left-8 xl:left-16">
-              
-            </div>
-
-            <div className="h-full flex flex-col justify-center gap-6 relative">
             <p className="text-md text-neutral-500 font-bold uppercase tracking-wider overflow-hidden mb-4">
                 <motion.span
                   className="block"
@@ -125,7 +121,10 @@ export default function PortfolioSection({ projects, content }: PortfolioSection
                 >
                   {content.eyebrowLabel}
                 </motion.span>
-              </p>
+                </p>
+            </div>
+
+            <div className="h-full flex flex-col justify-center gap-6 relative">
               <PortfolioCard project={activeProject} />
             </div>
 

@@ -12,7 +12,7 @@ interface Step {
   tag: string;
   description: string;
   accent: string;
-  bgAccent:string;
+  bgAccent: string;
 }
 
 // `word` is only the tail of each question — the sticky panel supplies the
@@ -22,25 +22,23 @@ const STEPS: Step[] = [
   {
     word: 'ARE WE DESIGNING FOR?',
     tag: 'DISCOVERY',
-    description: 'We start every project by asking why, not just what — the brief is a starting point, not the answer.',
-    accent: '#04a3cc',
-    bgAccent:'#f2fafc'
+    description: 'We explore the people, needs, behaviours, goals, and context behind the problem, building a deeper understanding of who we\'re designing for and what their experience actually looks like.',
+    accent: '#f59e0b',
+    bgAccent: '#f2fafc',
   },
   {
     word: 'DOES THIS MATTER?',
-    tag: 'TRUST',
-    description: 'We tell clients what they need to hear, not just what\'s easy to say.',
-    accent: '#f59e0b',
-    bgAccent:'#e6f6fa'
-
+    tag: 'CLARITY',
+    description: 'We connect what we\'ve learned to the problem at hand, uncovering the needs and opportunities that matter most and making sure we\'re solving something meaningful, relevant, and worth pursuing.',
+    accent: '#A5CD04',
+    bgAccent: '#e6f6fa',
   },
   {
     word: 'COULD THIS BECOME?',
-    tag: 'CONVICTION',
-    description: 'We push for the idea that\'s worth making, not just the one that\'s safe to ship.',
+    tag: 'DIRECTION',
+    description: 'We turn our understanding into a clear and purposeful direction, bringing together the insights, possibilities, and constraints to shape a product experience that has somewhere meaningful to go.',
     accent: '#10b981',
-    bgAccent:'#f2fafc'
-
+    bgAccent: '#f2fafc',
   },
 ];
 
@@ -146,13 +144,13 @@ export default function StrategySection() {
               same lemon-peel accent as Hero's INTENTIONAL pill. */}
           <motion.span
             aria-hidden="true"
-            initial={{ opacity: 0, scale: 0.6, rotate: -16 }}
-            animate={{ opacity: 1, scale: 1, rotate: -6 }}
+            initial={{ opacity: 0, scale: 0.6, rotate: -26 }}
+            animate={{ opacity: 1, scale: 1, rotate: -16 }}
             transition={{ duration: 0.7, ease: WORD_EASE, delay: 0.3 }}
             whileHover={{ rotate: 2, scale: 1.08 }}
-            className="absolute -top-14 right-0 px-6 py-3 rounded-sm bg-[#A5CD04] text-black font-display font-bold text-2xl uppercase select-none cursor-default"
+            className="absolute -top-10 -left-10 px-4 py-2 rounded-sm bg-[#A5CD04] text-black font-display font-bold text-4xl uppercase select-none cursor-default"
           >
-            QUESTIONS
+            MY APPROACH
           </motion.span>
         </div>
       </div>
@@ -162,24 +160,24 @@ export default function StrategySection() {
           <div
             key={step.word}
             ref={(el) => { rowRefs.current[index] = el; }}
-            style={{backgroundColor:step.bgAccent}}
+            style={{ backgroundColor: step.bgAccent }}
             className="flex flex-col sm:flex-row min-h-[420px] sm:min-h-[520px] border-b border-black/10 last:border-b-0 "
           >
             {/* Headline + description */}
             <div className="flex-1 flex flex-col justify-center gap-4 px-6 sm:px-10 py-10 sm:py-16">
-              <div className="flex flex-wrap items-center gap-3" aria-label={step.word}>
+              <div className="flex flex-wrap items-center gap-3 relative w-max" aria-label={step.word}>
                 <h3 className="text-6xl sm:text-8xl lg:text-9xl font-display font-medium uppercase text-black leading-[0.95]">
                   {step.word}
                 </h3>
                 <motion.span
                   whileHover={{ rotate: 8, scale: 1.1 }}
-                  className="inline-block px-3 py-1 rounded-sm text-white font-mono font-bold text-xs uppercase tracking-widest transform -rotate-6 cursor-pointer"
+                  className="absolute right-0 -bottom-3 inline-block px-2 py-2 rounded-sm font-display font-bold text-2xl uppercase tracking-widest transform -rotate-16 cursor-pointer leading-[90%]"
                   style={{ backgroundColor: step.accent }}
                 >
                   {step.tag}
                 </motion.span>
               </div>
-              <p className="text-sm sm:text-base text-neutral-600 font-medium leading-relaxed max-w-sm">
+              <p className="text-sm sm:text-base text-neutral-600 font-medium leading-relaxed max-w-3xl">
                 {step.description}
               </p>
             </div>

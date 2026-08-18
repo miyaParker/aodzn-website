@@ -371,7 +371,7 @@ export default function Hero({
             }
             transition={{ duration: 0.7, ease: WORD_EASE, delay: ready ? 1.7 : 0 }}
             whileHover={{ rotate: -2, scale: 1.08 }}
-            className="absolute bottom-[8%] left-[2%] px-5 py-2 rounded-sm bg-[#04a3cc] text-white font-display font-bold text-sm sm:text-4xl uppercase select-none cursor-default"
+            className="absolute bottom-[8%] left-[2%] px-5 py-2 rounded-sm bg-[#f59e0b] font-display font-bold text-sm sm:text-4xl uppercase select-none cursor-default"
           >
             BY DESIGN
           </motion.span>
