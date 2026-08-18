@@ -66,7 +66,7 @@ export interface NavLink {
 }
 
 export interface SocialLink {
-  label: 'Instagram' | 'LinkedIn' | 'Website';
+  label: 'Instagram' | 'LinkedIn' | 'X' | 'Website';
   href: string;
 }
 

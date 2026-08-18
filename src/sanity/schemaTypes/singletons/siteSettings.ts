@@ -96,7 +96,7 @@ export const siteSettingsType = defineType({
             {
               name: 'label',
               type: 'string',
-              options: { list: ['Instagram', 'LinkedIn', 'Website'] },
+              options: { list: ['Instagram', 'LinkedIn', 'X', 'Website'] },
             },
             { name: 'href', type: 'url' },
           ],

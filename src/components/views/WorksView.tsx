@@ -3,63 +3,15 @@
 import React, { useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import Link from 'next/link';
-import { ChevronDown } from 'lucide-react';
 import Navbar from '../Navbar';
 import Footer from '../Footer';
 import ContactModal from '../ContactModal';
+import FilterDropdown from '../FilterDropdown';
 import { WORK_TYPES } from '../../data/portfolioData';
 import { HomePageContent, Project, SiteSettings } from '../../types';
 
 type TypeFilter = 'All' | Project['type'];
 type DomainFilter = 'All' | string;
-
-function FilterDropdown<T extends string>({
-  label,
-  value,
-  options,
-  onChange,
-}: {
-  label: string;
-  value: T;
-  options: T[];
-  onChange: (value: T) => void;
-}) {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <div className="relative">
-      <button
-        onClick={() => setOpen((v) => !v)}
-        onBlur={() => setTimeout(() => setOpen(false), 120)}
-        className="flex items-center gap-2 text-sm font-medium text-black hover:text-neutral-600 transition-colors"
-      >
-        <span className="text-neutral-500">{label}</span>
-        <span>{value}</span>
-        <ChevronDown className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
-      </button>
-
-      {open && (
-        <div className="absolute top-full left-0 mt-3 min-w-40 rounded-sm border border-black/10 bg-white shadow-lg overflow-hidden z-20">
-          {options.map((opt) => (
-            <button
-              key={opt}
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={() => {
-                onChange(opt);
-                setOpen(false);
-              }}
-              className={`block w-full text-left px-4 py-2.5 text-sm transition-colors ${
-                opt === value ? 'bg-black/5 text-black font-medium' : 'text-neutral-600 hover:bg-black/5'
-              }`}
-            >
-              {opt}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
 
 interface WorksViewProps {
   siteSettings: SiteSettings;
@@ -92,8 +44,14 @@ export default function WorksView({ siteSettings, footerCta, contactModalContent
       />
 
       <main className="relative z-10 pt-28 pb-16 px-8 xl:px-16">
+        <nav aria-label="Breadcrumb" className="text-xs uppercase tracking-widest text-neutral-500 mb-8">
+          <Link href="/" className="hover:text-black transition-colors">Home</Link>
+          <span className="mx-2">/</span>
+          <span className="text-black">Work</span>
+        </nav>
+
         <div className="w-full text-center">
-          <h1 className="font-display font-medium text-6xl sm:text-8xl lg:text-9xl leading-[0.95] text-black">
+          <h1 className="font-display font-medium text-7xl sm:text-9xl lg:text-[10rem] leading-[0.95] text-black">
             Work that ships,<br />and actually works.
           </h1>
 

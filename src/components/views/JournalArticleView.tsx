@@ -119,7 +119,7 @@ export default function JournalArticleView({
           <ShareRow article={article} />
         </div>
 
-        <div className="relative w-full aspect-[21/9] mt-8 sm:mt-10 rounded-sm overflow-hidden">
+        <div className="relative w-screen left-1/2 right-1/2 -mx-[50vw] aspect-[21/9] mt-8 sm:mt-10 overflow-hidden">
           {article.heroImage ? (
             <img
               src={article.heroImage}

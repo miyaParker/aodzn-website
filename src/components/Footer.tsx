@@ -14,9 +14,20 @@ interface FooterProps {
   onOpenContact?: () => void;
 }
 
-const SOCIAL_ICONS: Record<SocialLink['label'], typeof Instagram> = {
+// Lucide has no X/Twitter brand mark, so it's drawn by hand here to match
+// the other icons' stroke-based sizing (className is the only prop used).
+function XIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  );
+}
+
+const SOCIAL_ICONS: Record<SocialLink['label'], React.ComponentType<{ className?: string }>> = {
   Instagram: Instagram,
   LinkedIn: Linkedin,
+  X: XIcon,
   Website: Globe,
 };
 
@@ -119,7 +130,7 @@ export default function Footer({ siteSettings, footerCta, onOpenContact }: Foote
           </button>
         </div>
 
-        <nav className="flex flex-wrap items-center sm:justify-end gap-x-8 gap-y-3">
+        <nav className="grid grid-cols-2 gap-x-28 gap-y-3">
           {siteSettings.footerMenuLinks.map((item) => {
             const isAnchor = item.href.startsWith('#');
             return (

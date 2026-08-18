@@ -18,7 +18,6 @@ export default async function Page() {
       siteSettings={siteSettings}
       footerCta={homePage.footerCta}
       contactModalContent={homePage.contactModal}
-      content={homePage.journalSection}
       articles={articles}
     />
   );

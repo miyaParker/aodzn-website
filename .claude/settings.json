@@ -72,7 +72,15 @@
       "Bash(npx --yes playwright screenshot --wait-for-timeout=2000 --viewport-size=1440,900 http://localhost:3003/works /private/tmp/claude-502/-Users-cchub-karen-Documents-Projects-personal-aodzn-website/1c19c4f4-8438-4f1a-a469-d972fb89f860/scratchpad/works.png)",
       "Bash(npx --yes playwright screenshot --wait-for-timeout=2000 --viewport-size=1440,900 http://localhost:3003/works/wakabeta /private/tmp/claude-502/-Users-cchub-karen-Documents-Projects-personal-aodzn-website/1c19c4f4-8438-4f1a-a469-d972fb89f860/scratchpad/casestudy.png)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3003/works/nonexistent-id)",
-      "Bash(mkdir -p /Users/cchub-karen/Documents/Projects/personal/aodzn-website/src/app/journal/\\\\[id\\\\])"
+      "Bash(mkdir -p /Users/cchub-karen/Documents/Projects/personal/aodzn-website/src/app/journal/\\\\[id\\\\])",
+      "Bash(curl -s -G \"https://5otksy4j.api.sanity.io/v2024-01-01/data/query/production\" --data-urlencode 'query=*[_type==\"homePage\"][0].journalSection')",
+      "Bash(curl -s http://localhost:3000/journal -o /tmp/journal_list2.html -w \"%{http_code}\\\\n\")",
+      "Read(//tmp/**)",
+      "Bash(curl -s http://localhost:3000/works -o /tmp/works2.html -w \"%{http_code}\\\\n\")",
+      "Bash(curl -s http://localhost:3000/journal -o /tmp/journal3.html -w \"%{http_code}\\\\n\")",
+      "Bash(curl -s http://localhost:3000/journal -o /tmp/journal4.html -w \"%{http_code}\\\\n\")",
+      "Bash(curl -s http://localhost:3000/works -o /tmp/works3.html -w \"%{http_code}\\\\n\")",
+      "Bash(curl -s http://localhost:3000/works -o /tmp/works4.html -w \"%{http_code}\\\\n\")"
     ],
     "additionalDirectories": [
       "/private/tmp",

@@ -17,6 +17,18 @@
     font-family: var(--font-display);
     font-weight: 500;
   }
+
+  /* Tailwind's preflight leaves <button> at the browser default (arrow)
+     cursor rather than a hand pointer — every button/toggle/dropdown in the
+     app is clickable, so restore the pointer cursor globally instead of
+     annotating each one with cursor-pointer individually. */
+  button:not(:disabled), [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  button:disabled, [role="button"][aria-disabled="true"] {
+    cursor: not-allowed;
+  }
 }
 
 .font-syne {

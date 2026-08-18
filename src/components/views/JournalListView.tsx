@@ -6,7 +6,10 @@ import Link from 'next/link';
 import Navbar from '../Navbar';
 import Footer from '../Footer';
 import ContactModal from '../ContactModal';
+import FilterDropdown from '../FilterDropdown';
 import { HomePageContent, JournalArticle, SiteSettings } from '../../types';
+
+type CategoryFilter = 'All' | string;
 
 const EASE = [0.76, 0, 0.24, 1] as const;
 
@@ -17,7 +20,6 @@ interface JournalListViewProps {
   siteSettings: SiteSettings;
   footerCta: HomePageContent['footerCta'];
   contactModalContent: HomePageContent['contactModal'];
-  content: HomePageContent['journalSection'];
   articles: JournalArticle[];
 }
 
@@ -25,10 +27,9 @@ export default function JournalListView({
   siteSettings,
   footerCta,
   contactModalContent,
-  content,
   articles,
 }: JournalListViewProps) {
-  const [categoryFilter, setCategoryFilter] = useState('All');
+  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('All');
   const [contactOpen, setContactOpen] = useState(false);
 
   const categories = useMemo(
@@ -56,26 +57,19 @@ export default function JournalListView({
           <span className="text-black">Journal</span>
         </nav>
 
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
-          <h1 className="font-display font-medium text-6xl sm:text-7xl lg:text-8xl leading-[0.95] text-black">
-            {content.sectionTitle}
+        <div className="w-full text-center">
+          <h1 className="font-display font-medium text-7xl sm:text-9xl lg:text-[10rem] leading-[0.95] text-black">
+            Lessons that stuck,<br />and a few that didn&apos;t.
           </h1>
 
           {categories.length > 0 && (
-            <div className="flex flex-wrap items-center gap-2">
-              {['All', ...categories].map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setCategoryFilter(cat)}
-                  className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-colors ${
-                    categoryFilter === cat
-                      ? 'bg-black text-white'
-                      : 'bg-white text-neutral-600 border border-black/10 hover:border-black/30'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
+            <div className="mt-6 inline-flex items-center gap-6 sm:gap-8 px-6 py-3.5 rounded-full bg-white border border-black/10">
+              <FilterDropdown
+                label="Category"
+                value={categoryFilter}
+                options={['All', ...categories]}
+                onChange={setCategoryFilter}
+              />
             </div>
           )}
         </div>
