@@ -57,7 +57,7 @@ export default function JournalSection({ articles, content }: JournalSectionProp
   return (
     <section id="journal" className="relative w-full bg-white text-black" style={{ borderColor: '#737373' }}>
       <div className="px-6 sm:px-10 lg:px-16 pt-24 sm:pt-32 pb-24 sm:pb-32">
-      <p className="text-md text-neutral-500 font-bold uppercase tracking-wider overflow-hidden mb-4">
+      <p className="text-sm text-neutral-500 font-bold uppercase tracking-wider overflow-hidden mb-4">
                 <motion.span
                   className="block"
                   initial={{ y: '100%', opacity: 0 }}

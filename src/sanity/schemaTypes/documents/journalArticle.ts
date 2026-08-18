@@ -45,7 +45,21 @@ export const journalArticleType = defineType({
       name: 'body',
       type: 'text',
       rows: 10,
-      description: 'Article body. Separate paragraphs with a blank line.',
+      description:
+        'Article body. Separate paragraphs with a blank line. Prefix a paragraph with "## " to render it as a section heading, or "> " to render it as a pull quote (optionally add " ~ Attribution" at the end — not an em dash, since those show up naturally inside quotes). Wrap words in ==double equals== to highlight them.',
+    }),
+    defineField({
+      name: 'gallery',
+      title: 'Body gallery',
+      type: 'array',
+      of: [{ type: 'image', options: { hotspot: true } }],
+      description: 'Optional pair of images dropped partway through the article body.',
+      validation: (rule) => rule.max(2),
+    }),
+    defineField({
+      name: 'galleryCaption',
+      title: 'Gallery caption',
+      type: 'string',
     }),
   ],
   preview: {

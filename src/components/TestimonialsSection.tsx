@@ -51,7 +51,7 @@ const TESTIMONIALS: Testimonial[] = [
 // Eyebrow label — same treatment as PortfolioSection's eyebrowLabel.
 function SectionEyebrow() {
   return (
-    <p className="text-md text-neutral-500 font-bold uppercase tracking-wider overflow-hidden mb-3">
+    <p className="text-sm text-neutral-500 font-bold uppercase tracking-wider overflow-hidden mb-3">
       <motion.span
         className="block"
         initial={{ y: '100%', opacity: 0 }}

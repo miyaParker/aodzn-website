@@ -50,6 +50,8 @@ export interface JournalArticle {
   category?: string;
   heroImage?: string;
   body?: string;
+  gallery?: string[];
+  galleryCaption?: string;
 }
 
 export interface ProcessStepContent {

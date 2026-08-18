@@ -70,7 +70,7 @@ export default function ProcessAccordionSection({ steps, content }: ProcessAccor
   return (
     <section id="process" className="relative w-full bg-white text-black">
       <div className="px-6 sm:px-10 lg:px-16 pt-24 sm:pt-32 pb-10 sm:pb-14">
-      <p className="text-md text-neutral-500 font-bold uppercase tracking-wider overflow-hidden mb-4">
+      <p className="text-sm text-neutral-500 font-bold uppercase tracking-wider overflow-hidden mb-4">
                 <motion.span
                   className="block"
                   initial={{ y: '100%', opacity: 0 }}

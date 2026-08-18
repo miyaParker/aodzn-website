@@ -1,12 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Facebook, Link2, Twitter } from 'lucide-react';
+import { Facebook, Linkedin, Link2, Mail, Twitter } from 'lucide-react';
 import Navbar from '../Navbar';
 import Footer from '../Footer';
 import ContactModal from '../ContactModal';
 import { HomePageContent, JournalArticle, SiteSettings } from '../../types';
+
+const ACCENT = '#04a3cc';
 
 const formatArticleDate = (date: string) =>
   new Date(date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
@@ -17,6 +19,22 @@ const PLACEHOLDER_PARAGRAPHS = [
   'This article is still being written. Check back soon for the full piece — in the meantime, the summary above covers the gist of it.',
   'Want to talk through this topic sooner? Reach out directly and I\'m happy to share more.',
 ];
+
+// Lightweight markup the `body` text field supports: a paragraph prefixed
+// with "> " renders as a pull quote (optionally "> quote — Attribution"),
+// and ==words== render as an inline highlight. Keeps Studio authoring to
+// plain text while still allowing richer typography in the article.
+function renderInline(text: string) {
+  return text.split(/(==[^=]+==)/g).map((part, i) => {
+    const match = part.match(/^==([^=]+)==$/);
+    if (!match) return part;
+    return (
+      <mark key={i} className="px-1 rounded-[2px] text-black" style={{ backgroundColor: `${ACCENT}26` }}>
+        {match[1]}
+      </mark>
+    );
+  });
+}
 
 function ShareRow({ article }: { article: JournalArticle }) {
   const [copied, setCopied] = useState(false);
@@ -29,6 +47,9 @@ function ShareRow({ article }: { article: JournalArticle }) {
     setTimeout(() => setCopied(false), 1800);
   };
 
+  const iconClass =
+    'flex items-center justify-center w-9 h-9 rounded-sm border border-neutral-300 text-neutral-500 hover:text-black hover:border-[#04a3cc] transition-colors';
+
   return (
     <div className="flex items-center gap-2 shrink-0">
       <span className="text-xs font-bold uppercase tracking-widest text-neutral-500 mr-1">Share:</span>
@@ -37,7 +58,7 @@ function ShareRow({ article }: { article: JournalArticle }) {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Share on Facebook"
-        className="flex items-center justify-center w-9 h-9 rounded-sm border border-neutral-300 text-neutral-500 hover:text-black hover:border-[#04a3cc] transition-colors"
+        className={iconClass}
       >
         <Facebook className="w-4 h-4" />
       </a>
@@ -46,14 +67,30 @@ function ShareRow({ article }: { article: JournalArticle }) {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Share on X"
-        className="flex items-center justify-center w-9 h-9 rounded-sm border border-neutral-300 text-neutral-500 hover:text-black hover:border-[#04a3cc] transition-colors"
+        className={iconClass}
       >
         <Twitter className="w-4 h-4" />
+      </a>
+      <a
+        href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Share on LinkedIn"
+        className={iconClass}
+      >
+        <Linkedin className="w-4 h-4" />
+      </a>
+      <a
+        href={`mailto:?subject=${encodeURIComponent(article.title)}&body=${encodeURIComponent(shareUrl)}`}
+        aria-label="Share via email"
+        className={iconClass}
+      >
+        <Mail className="w-4 h-4" />
       </a>
       <button
         onClick={copyLink}
         aria-label="Copy link"
-        className="relative flex items-center justify-center w-9 h-9 rounded-sm border border-neutral-300 text-neutral-500 hover:text-black hover:border-[#04a3cc] transition-colors"
+        className={`relative ${iconClass}`}
       >
         <Link2 className="w-4 h-4" />
         {copied && (
@@ -66,11 +103,86 @@ function ShareRow({ article }: { article: JournalArticle }) {
   );
 }
 
+// Thin fixed bar above the navbar that fills with the reader's scroll
+// position through <main>, so there's a persistent sense of how much of
+// the piece is left.
+function ReadingProgress() {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      setProgress(scrollable > 0 ? Math.min(100, (window.scrollY / scrollable) * 100) : 0);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  return (
+    <div className="fixed top-0 left-0 right-0 z-50 h-[3px] bg-transparent">
+      <div
+        className="h-full transition-[width] duration-150 ease-linear"
+        style={{ width: `${progress}%`, backgroundColor: ACCENT }}
+      />
+    </div>
+  );
+}
+
+function RelatedArticles({ articles }: { articles: JournalArticle[] }) {
+  if (articles.length === 0) return null;
+
+  return (
+    <section className="w-full pb-20 sm:pb-28 border-t border-black/10 pt-16 sm:pt-20">
+      <h2 className="font-display font-medium text-3xl sm:text-4xl text-black mb-10">
+        Keep reading
+      </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {articles.map((related) => (
+          <Link
+            key={related.id}
+            href={`/journal/${related.id}`}
+            data-cursor="view"
+            data-cursor-text="READ"
+            className="group block"
+          >
+            <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-neutral-950">
+              {related.heroImage ? (
+                <img
+                  src={related.heroImage}
+                  alt={related.title}
+                  loading="lazy"
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+              ) : (
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-0 transition-transform duration-700 group-hover:scale-105"
+                  style={{ background: related.gradient }}
+                />
+              )}
+            </div>
+            {related.category && (
+              <span className="block mt-4 text-[10px] font-bold uppercase tracking-widest text-neutral-500">
+                {related.category}
+              </span>
+            )}
+            <p className="mt-2 font-display font-medium text-lg sm:text-xl text-black leading-snug group-hover:text-neutral-600 transition-colors">
+              {related.title}
+            </p>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 interface JournalArticleViewProps {
   article: JournalArticle;
   siteSettings: SiteSettings;
   footerCta: HomePageContent['footerCta'];
   contactModalContent: HomePageContent['contactModal'];
+  relatedArticles?: JournalArticle[];
 }
 
 export default function JournalArticleView({
@@ -78,12 +190,15 @@ export default function JournalArticleView({
   siteSettings,
   footerCta,
   contactModalContent,
+  relatedArticles = [],
 }: JournalArticleViewProps) {
   const [contactOpen, setContactOpen] = useState(false);
   const paragraphs = article.body?.split(/\n\s*\n/).filter(Boolean) ?? [];
+  const galleryInsertIndex = Math.max(0, Math.floor(paragraphs.length / 2) - 1);
 
   return (
     <div className="relative min-h-screen bg-[#FFFFFF] text-[#111111] antialiased selection:bg-black selection:text-white">
+      <ReadingProgress />
       <Navbar
         siteSettings={siteSettings}
         onOpenContact={() => setContactOpen(true)}
@@ -132,17 +247,83 @@ export default function JournalArticleView({
         </div>
 
         <div className="max-w-2xl mx-auto py-16 sm:py-24 flex flex-col gap-6">
-          {(paragraphs.length > 0 ? paragraphs : PLACEHOLDER_PARAGRAPHS).map((paragraph, i) => (
-            <p
-              key={i}
-              className={`text-lg sm:text-xl leading-relaxed ${
-                paragraphs.length > 0 ? 'text-neutral-700' : 'text-neutral-400 italic'
-              }`}
-            >
-              {paragraph}
-            </p>
-          ))}
+          {(paragraphs.length > 0 ? paragraphs : PLACEHOLDER_PARAGRAPHS).map((paragraph, i) => {
+            const isPlaceholder = paragraphs.length === 0;
+            const trimmed = paragraph.trim();
+
+            let block: React.ReactNode;
+
+            if (!isPlaceholder && trimmed.startsWith('## ')) {
+              block = (
+                <h2 key={i} className="font-display font-medium text-2xl sm:text-3xl text-black mt-4">
+                  {trimmed.slice(3)}
+                </h2>
+              );
+            } else if (!isPlaceholder && trimmed.startsWith('>')) {
+              const raw = trimmed.replace(/^>\s*/, '');
+              // Split on " ~ " rather than an em dash — this prose style
+              // uses em dashes constantly for asides, so that character
+              // isn't a safe delimiter for an optional attribution suffix.
+              const attributionMatch = raw.match(/^(.*?)\s+~\s+(.+)$/s);
+              const quote = attributionMatch ? attributionMatch[1] : raw;
+              const attribution = attributionMatch?.[2];
+              block = (
+                <blockquote
+                  key={i}
+                  className="my-2 border-l-2 pl-6 sm:pl-8 py-1"
+                  style={{ borderColor: ACCENT }}
+                >
+                  <p className="font-display font-medium text-2xl sm:text-3xl leading-snug text-black">
+                    &ldquo;{renderInline(quote)}&rdquo;
+                  </p>
+                  {attribution && (
+                    <cite className="block mt-3 text-xs font-bold uppercase tracking-widest text-neutral-500 not-italic">
+                      — {attribution}
+                    </cite>
+                  )}
+                </blockquote>
+              );
+            } else {
+              block = (
+                <p
+                  key={i}
+                  className={`text-base sm:text-lg leading-relaxed ${
+                    isPlaceholder ? 'text-neutral-400 italic' : 'text-neutral-700'
+                  }`}
+                >
+                  {isPlaceholder ? paragraph : renderInline(paragraph)}
+                </p>
+              );
+            }
+
+            const showGallery =
+              !isPlaceholder && (article.gallery?.length ?? 0) > 0 && i === galleryInsertIndex;
+
+            return (
+              <React.Fragment key={i}>
+                {block}
+                {showGallery && (
+                  <figure className="my-2">
+                    <div className={`grid gap-4 ${article.gallery!.length > 1 ? 'grid-cols-2' : 'grid-cols-1'}`}>
+                      {article.gallery!.map((src, gi) => (
+                        <div key={gi} className="aspect-[3/4] overflow-hidden rounded-sm bg-neutral-100">
+                          <img src={src} alt={article.title} loading="lazy" className="w-full h-full object-cover" />
+                        </div>
+                      ))}
+                    </div>
+                    {article.galleryCaption && (
+                      <figcaption className="mt-3 text-sm text-neutral-500 italic">
+                        {article.galleryCaption}
+                      </figcaption>
+                    )}
+                  </figure>
+                )}
+              </React.Fragment>
+            );
+          })}
         </div>
+
+        <RelatedArticles articles={relatedArticles} />
       </main>
 
       <Footer siteSettings={siteSettings} footerCta={footerCta} onOpenContact={() => setContactOpen(true)} />

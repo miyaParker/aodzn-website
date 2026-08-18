@@ -96,7 +96,7 @@ export default function Footer({ siteSettings, footerCta, onOpenContact }: Foote
       {/* CTA + nav — same row, nav pinned to the far right. */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-8">
         <div className="flex flex-col items-start gap-6">
-          <p className="text-md text-neutral-500 font-bold uppercase tracking-wider overflow-hidden">
+          <p className="text-sm text-neutral-500 font-bold uppercase tracking-wider overflow-hidden">
             <motion.span
               className="block"
               initial={{ y: '100%', opacity: 0 }}

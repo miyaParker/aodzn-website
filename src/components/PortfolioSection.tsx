@@ -115,7 +115,7 @@ export default function PortfolioSection({ projects, content }: PortfolioSection
             </div>
 
             <div className="h-full flex flex-col justify-center gap-6 relative">
-            <p className="text-md text-neutral-500 font-bold uppercase tracking-wider overflow-hidden mb-4">
+            <p className="text-sm text-neutral-500 font-bold uppercase tracking-wider overflow-hidden mb-4">
                 <motion.span
                   className="block"
                   initial={{ y: '100%', opacity: 0 }}

@@ -153,7 +153,7 @@ export default function CaseStudyView({
           </div>
 
           <h1
-            className="font-medium text-md sm:text-lg lg:text-4xl leading-[130%] tracking-tight max-w-2xl"
+            className="font-medium text-base sm:text-lg lg:text-4xl leading-[1.3] tracking-tight max-w-2xl"
             style={{ fontFamily: 'var(--font-sans)', color: ink(accentColor) }}
           >
             {project.subtitle}
@@ -190,12 +190,6 @@ export default function CaseStudyView({
             <Reveal className="aspect-[2.7/2] overflow-hidden bg-neutral-100">
               <img src={nextImg()} alt={galleryAlt} loading="lazy" className="w-full h-full object-cover" />
             </Reveal>
-            <Reveal className="px-8 xl:px-16">
-              <p className="text-xl sm:text-2xl font-medium tracking-tight text-neutral-900 leading-relaxed">{cs.overview}</p>
-            </Reveal>
-            <Reveal className="px-8 xl:px-16">
-              <p className="text-lg text-neutral-700 leading-relaxed">{cs.challenge}</p>
-            </Reveal>
           </div>
         </section>
 
@@ -219,7 +213,7 @@ export default function CaseStudyView({
         {/* Image strip — a row of gallery shots straight from the
             project's asset folder, filling the beat that used to be the
             pull quote. */}
-        <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4">
           <Reveal className="aspect-[3/4] overflow-hidden bg-neutral-100">
             <img src={nextImg()} alt={galleryAlt} loading="lazy" className="w-full h-full object-cover" />
           </Reveal>
@@ -273,17 +267,8 @@ export default function CaseStudyView({
             <Reveal className="px-8 xl:px-16">
               <p className="text-xl sm:text-2xl font-medium tracking-tight text-neutral-900 leading-relaxed">{cs.solution}</p>
             </Reveal>
-            <Reveal className="px-8 xl:px-16">
-              <p className="text-lg text-neutral-700 leading-relaxed">{cs.solution}</p>
-            </Reveal>
             <Reveal className="aspect-[4/3] overflow-hidden bg-neutral-100">
               <img src={nextImg()} alt={galleryAlt} loading="lazy" className="w-full h-full object-cover" />
-            </Reveal>
-            <Reveal className="px-8 xl:px-16">
-              <p className="text-xl sm:text-2xl font-medium tracking-tight text-neutral-900 leading-relaxed">{cs.solution}</p>
-            </Reveal>
-            <Reveal className="px-8 xl:px-16">
-              <p className="text-lg text-neutral-700 leading-relaxed">{cs.solution}</p>
             </Reveal>
           </div>
         </section>
@@ -292,8 +277,8 @@ export default function CaseStudyView({
             from the project's asset set, breaking the rhythm of one even
             grid with a full-bleed shot, a pair, a trio, then an
             asymmetric pair. */}
-        <section className="px-4 pt-4 pb-4 flex flex-col gap-4">
-          <Reveal className="aspect-21/9 overflow-hidden bg-neutral-100">
+        <section className="p-4 flex flex-col gap-4">
+          <Reveal className="aspect-[21/9] overflow-hidden bg-neutral-100">
             <img src={nextImg()} alt={galleryAlt} loading="lazy" className="w-full h-full object-cover" />
           </Reveal>
           <div className="grid grid-cols-2 gap-4">
@@ -315,7 +300,7 @@ export default function CaseStudyView({
               <img src={nextImg()} alt={galleryAlt} loading="lazy" className="w-full h-full object-cover" />
             </Reveal>
           </div>
-          <Reveal className="aspect-21/9 overflow-hidden bg-neutral-100">
+          <Reveal className="aspect-[21/9] overflow-hidden bg-neutral-100">
             <img src={nextImg()} alt={galleryAlt} loading="lazy" className="w-full h-full object-cover" />
           </Reveal>
           <div className="grid grid-cols-3 gap-4 h-80 sm:h-96">
@@ -331,10 +316,10 @@ export default function CaseStudyView({
         {/* The Impact: closes the page out with the growth narrative —
             headline plus copy, full-width, no sticky two-column composition
             like Challenge/Solution. */}
-        <section id="impact" className="pt-12 pb-24 sm:pt-16 sm:pb-32 px-8 xl:px-16" style={{ backgroundColor: accentColor }}>
+        <section id="impact" className="py-24 sm:py-32 px-8 xl:px-16" style={{ backgroundColor: accentColor }}>
           <div className="max-w-3xl mx-auto text-center">
             <Reveal>
-              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: ink(accentColor, 0.6) }}>The Impact</span>
+              <span className="text-sm sm:text-base font-bold uppercase tracking-widest" style={{ color: ink(accentColor, 0.6) }}>The Impact</span>
             </Reveal>
             <Reveal>
               <h2

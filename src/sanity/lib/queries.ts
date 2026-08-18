@@ -70,7 +70,12 @@ export const JOURNAL_ARTICLES_QUERY = defineQuery(
 )
 
 export const JOURNAL_ARTICLE_BY_SLUG_QUERY = defineQuery(
-  `*[_type == "journalArticle" && slug.current == $slug][0] { ${journalArticleFields}, body }`
+  `*[_type == "journalArticle" && slug.current == $slug][0] {
+    ${journalArticleFields},
+    body,
+    "gallery": gallery[].asset->url,
+    galleryCaption
+  }`
 )
 
 export const JOURNAL_ARTICLE_SLUGS_QUERY = defineQuery(

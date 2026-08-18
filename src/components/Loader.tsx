@@ -70,16 +70,28 @@ interface LoaderProps {
   onComplete?: () => void;
 }
 
+// Module-scoped (not state/sessionStorage): survives client-side route
+// changes, which remount this component without re-executing the module, but
+// resets on an actual page reload, which does re-execute it. That's exactly
+// "once per landing/reload, not per navbar navigation".
+let hasPlayed = false;
+
 export default function Loader({ content, onComplete }: LoaderProps) {
   const [progress, setProgress] = useState(0);
-  const [done, setDone] = useState(false);
+  const [done, setDone] = useState(hasPlayed);
   const [cycling, setCycling] = useState(true);
   const cyclingWords = content.cyclingWords?.length ? content.cyclingWords : FALLBACK_WORDS;
   const backgroundWords = content.backgroundWords?.length ? content.backgroundWords : FALLBACK_WORDS;
 
   useEffect(() => {
+    if (hasPlayed) {
+      onComplete?.();
+      return;
+    }
+
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion) {
+      hasPlayed = true;
       setDone(true);
       onComplete?.();
       return;
@@ -109,6 +121,7 @@ export default function Loader({ content, onComplete }: LoaderProps) {
         setCycling(false);
         window.setTimeout(() => {
           if (cancelled) return;
+          hasPlayed = true;
           setDone(true);
           onComplete?.();
           document.body.style.overflow = previousOverflow;
