@@ -255,7 +255,7 @@ export default function JournalArticleView({
 
             if (!isPlaceholder && trimmed.startsWith('## ')) {
               block = (
-                <h2 key={i} className="font-display font-medium text-2xl sm:text-3xl text-black mt-4">
+                <h2 key={i} className="font-sans font-medium text-2xl sm:text-3xl text-black mt-4">
                   {trimmed.slice(3)}
                 </h2>
               );

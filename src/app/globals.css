@@ -39,6 +39,10 @@
   font-family: var(--font-display);
 }
 
+.font-sans {
+  font-family: var(--font-sans);
+}
+
 /* Custom Lenis Smooth Scroll Styles */
 html.lenis, html.lenis body {
   height: auto;
