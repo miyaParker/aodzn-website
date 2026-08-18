@@ -12,7 +12,7 @@ interface ProcessTimelineProps {
 
 export default function ProcessTimeline({ content }: ProcessTimelineProps) {
   return (
-    <section id="process" className="min-h-screen w-full px-4 sm:px-6 lg:px-8 pt-16 flex flex-col">
+    <section id="approach" className="min-h-screen w-full px-8 xl:px-16 pt-16 flex flex-col">
       {/* Subhead */}
       <div className="text-center space-y-3">
         <h2 className="text-5xl sm:text-7xl lg:text-8xl font-display font-medium text-black max-w-4xl mx-auto leading-[0.9] tracking uppercase">
@@ -34,7 +34,7 @@ export default function ProcessTimeline({ content }: ProcessTimelineProps) {
 
       {/* Illustrations */}
       <div className="flex-1 flex items-center mt-12 sm:mt-16">
-        <div className="w-full flex justify-center gap-24 items-stretch">
+        <div className="w-full flex flex-col sm:flex-row justify-center items-center gap-8 sm:gap-12 lg:gap-24">
           {content.illustrations.map((illustration, index) => (
             <motion.div
               key={illustration}
@@ -42,7 +42,7 @@ export default function ProcessTimeline({ content }: ProcessTimelineProps) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="flex items-center justify-center"
+              className="flex items-center justify-center shrink-0"
             >
               <img
                 src={illustration}

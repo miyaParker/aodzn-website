@@ -68,7 +68,7 @@ export default function ProcessAccordionSection({ steps, content }: ProcessAccor
   }, []);
 
   return (
-    <section id="process-accordion" className="relative w-full bg-white text-black">
+    <section id="process" className="relative w-full bg-white text-black">
       <div className="px-6 sm:px-10 lg:px-16 pt-24 sm:pt-32 pb-10 sm:pb-14">
       <p className="text-md text-neutral-500 font-bold uppercase tracking-wider overflow-hidden mb-4">
                 <motion.span
@@ -178,7 +178,7 @@ function StepCard({
         style={{ top: -peekOffset, borderColor: isActive ? ACCENT : NEUTRAL }}
       />
 
-      <div className="relative h-full overflow-hidden px-6 sm:px-10 lg:px-16 pt-10 pb-6 sm:pt-12 sm:pb-8">
+      <div className="relative h-full px-6 sm:px-10 lg:px-16 pt-10 pb-6 sm:pt-12 sm:pb-8">
         <div
           aria-hidden="true"
           className="absolute inset-0 opacity-[0.06] pointer-events-none"

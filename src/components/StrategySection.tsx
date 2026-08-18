@@ -120,7 +120,7 @@ export default function StrategySection() {
   }, []);
 
   return (
-    <section id="values" className="w-full flex">
+    <section id="approach" className="w-full flex">
       {/* Section label — same height as one row, sticks at the top of the
           section so each row scrolls up and intersects it in turn. */}
       <div className="hidden sm:flex shrink-0 w-72 lg:w-[23rem] min-h-[420px] sm:min-h-[520px] bg-[#0082a8] items-center justify-center sticky top-20 self-start overflow-hidden">

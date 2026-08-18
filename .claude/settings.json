@@ -71,11 +71,13 @@
       "Bash(ps -p 5598 -o pid,ppid,etime,command)",
       "Bash(npx --yes playwright screenshot --wait-for-timeout=2000 --viewport-size=1440,900 http://localhost:3003/works /private/tmp/claude-502/-Users-cchub-karen-Documents-Projects-personal-aodzn-website/1c19c4f4-8438-4f1a-a469-d972fb89f860/scratchpad/works.png)",
       "Bash(npx --yes playwright screenshot --wait-for-timeout=2000 --viewport-size=1440,900 http://localhost:3003/works/wakabeta /private/tmp/claude-502/-Users-cchub-karen-Documents-Projects-personal-aodzn-website/1c19c4f4-8438-4f1a-a469-d972fb89f860/scratchpad/casestudy.png)",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3003/works/nonexistent-id)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3003/works/nonexistent-id)",
+      "Bash(mkdir -p /Users/cchub-karen/Documents/Projects/personal/aodzn-website/src/app/journal/\\\\[id\\\\])"
     ],
     "additionalDirectories": [
       "/private/tmp",
-      "/Users/cchub-karen/Documents/Projects/personal/aodzn-website/src/app/works"
+      "/Users/cchub-karen/Documents/Projects/personal/aodzn-website/src/app/works",
+      "/Users/cchub-karen/Documents/Projects/personal/aodzn-website/src/app/journal"
     ]
   }
 }

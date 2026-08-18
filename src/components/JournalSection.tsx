@@ -2,6 +2,7 @@
 
 import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { HomePageContent, JournalArticle } from '../types';
 
@@ -81,9 +82,9 @@ export default function JournalSection({ articles, content }: JournalSectionProp
 
         <div ref={listRef} className="relative mt-14 sm:mt-20 border-t border-black/10">
           {articles.map((article, index) => (
-            <div
+            <Link
               key={article.id}
-              tabIndex={0}
+              href={`/journal/${article.id}`}
               data-cursor="view"
               data-cursor-text="READ"
               onMouseEnter={() => showPreview(article.id, index)}
@@ -117,7 +118,7 @@ export default function JournalSection({ articles, content }: JournalSectionProp
                   <ArrowUpRight className="w-4 h-4" />
                 </span>
               </div>
-            </div>
+            </Link>
           ))}
 
           {/* Hover preview: slides to sit in the gap between whichever row's

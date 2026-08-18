@@ -76,6 +76,7 @@ export default function Navbar({ siteSettings, onOpenContact, onOpenShowreel, na
   const [activeSection, setActiveSection] = useState('home');
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [hideForSection, setHideForSection] = useState(false);
 
   const navItems = navItemsProp ?? siteSettings.navItems;
 
@@ -110,6 +111,33 @@ export default function Navbar({ siteSettings, onOpenContact, onOpenShowreel, na
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
   }, []);
+
+  // The Portfolio ("Work") and Testimonials sections are full-bleed
+  // scrollytelling blocks — the fixed navbar competes with them visually, so
+  // it slides out of the way for as long as either is in view and returns
+  // once scrolled past. One observer tracks both; the navbar stays hidden
+  // as long as at least one of them is still intersecting.
+  useEffect(() => {
+    if (!isHome) return;
+    const targets = ['#works', '#testimonials']
+      .map((selector) => document.querySelector(selector))
+      .filter((el): el is Element => el !== null);
+    if (targets.length === 0) return;
+
+    const intersecting = new Set<Element>();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) intersecting.add(entry.target);
+          else intersecting.delete(entry.target);
+        });
+        setHideForSection(intersecting.size > 0);
+      },
+      { threshold: 0.15 }
+    );
+    targets.forEach((target) => observer.observe(target));
+    return () => observer.disconnect();
+  }, [isHome]);
 
   // The logo always points home — off the homepage, let its href='/' do a
   // real navigation instead of smooth-scrolling to a #home that isn't there.
@@ -150,7 +178,7 @@ export default function Navbar({ siteSettings, onOpenContact, onOpenShowreel, na
           isScrolled
             ? 'py-3.5 bg-white/70 backdrop-blur-md border-b border-black/5'
             : 'py-6 bg-transparent'
-        }`}
+        } ${hideForSection && !mobileMenuOpen ? '-translate-y-full pointer-events-none' : 'translate-y-0'}`}
       >
         <div className="px-8 xl:px-16 flex items-center justify-between">
           {/* Logo */}

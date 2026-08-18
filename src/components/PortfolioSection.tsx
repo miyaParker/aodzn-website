@@ -101,7 +101,7 @@ export default function PortfolioSection({ projects, content }: PortfolioSection
 
   return (
     <section
-      id="work"
+      id="works"
       ref={sectionRef}
       className="relative w-full bg-white text-black border-t"
       style={{ height: `${sectionHeightVh}vh`, borderColor: '#737373' }}
@@ -111,6 +111,10 @@ export default function PortfolioSection({ projects, content }: PortfolioSection
         <div className="grid grid-cols-12 h-full">
           <div className="col-span-4 h-full relative px-8 xl:pl-16 xl:pr-12 z-10 bg-white">
             <div className="absolute top-10 left-8 xl:left-16">
+           
+            </div>
+
+            <div className="h-full flex flex-col justify-center gap-6 relative">
             <p className="text-md text-neutral-500 font-bold uppercase tracking-wider overflow-hidden mb-4">
                 <motion.span
                   className="block"
@@ -122,9 +126,6 @@ export default function PortfolioSection({ projects, content }: PortfolioSection
                   {content.eyebrowLabel}
                 </motion.span>
                 </p>
-            </div>
-
-            <div className="h-full flex flex-col justify-center gap-6 relative">
               <PortfolioCard project={activeProject} />
             </div>
 
@@ -135,7 +136,7 @@ export default function PortfolioSection({ projects, content }: PortfolioSection
 
           <div className="col-span-8 h-full relative overflow-hidden">
             <motion.div style={{ y: filmstripY }} className="flex flex-col">
-              <div ref={introRef} className="w-full px-8 xl:px-16 py-16">
+              <div ref={introRef} className="w-full py-16">
                 <p className="text-xl sm:text-2xl xl:text-3xl text-neutral-600 leading-[140%] tracking-tight max-w-3xl">
                   {content.introText}
                 </p>

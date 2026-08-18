@@ -51,16 +51,31 @@ export const PROJECT_SLUGS_QUERY = defineQuery(
   `*[_type == "project"]{ "id": slug.current }`
 )
 
-export const JOURNAL_ARTICLES_QUERY = defineQuery(`
-  *[_type == "journalArticle"] | order(order asc) {
-    "id": slug.current,
-    title,
-    date,
-    previewTitle,
-    previewSubtitle,
-    gradient
-  }
-`)
+// Shared field list between the list and by-slug queries, same
+// shared-projection idea as projectProjection above — `body` is left out of
+// the list view (never needed there) and appended only in the by-slug object.
+const journalArticleFields = /* groq */ `
+  "id": slug.current,
+  title,
+  date,
+  previewTitle,
+  previewSubtitle,
+  gradient,
+  category,
+  "heroImage": heroImage.asset->url
+`
+
+export const JOURNAL_ARTICLES_QUERY = defineQuery(
+  `*[_type == "journalArticle"] | order(order asc) { ${journalArticleFields} }`
+)
+
+export const JOURNAL_ARTICLE_BY_SLUG_QUERY = defineQuery(
+  `*[_type == "journalArticle" && slug.current == $slug][0] { ${journalArticleFields}, body }`
+)
+
+export const JOURNAL_ARTICLE_SLUGS_QUERY = defineQuery(
+  `*[_type == "journalArticle"]{ "id": slug.current }`
+)
 
 export const PROCESS_STEPS_QUERY = defineQuery(`
   *[_type == "processStep"] | order(order asc) {

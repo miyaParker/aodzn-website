@@ -10,6 +10,7 @@ import ProcessAccordionSection from '../ProcessAccordionSection';
 import MovesPeopleSection from '../MovesPeopleSection';
 import DigitalSection from '../DigitalSection';
 import PortfolioSection from '../PortfolioSection';
+import TestimonialsSection from '../TestimonialsSection';
 import JournalSection from '../JournalSection';
 import Footer from '../Footer';
 import CustomCursor from '../CustomCursor';
@@ -84,6 +85,8 @@ export default function HomeView({
         {/* <DigitalSection /> */}
 
         <PortfolioSection projects={projects} content={homePage.portfolioSection} />
+
+        <TestimonialsSection />
 
         <JournalSection articles={journalArticles} content={homePage.journalSection} />
       </main>

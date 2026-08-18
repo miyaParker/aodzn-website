@@ -29,6 +29,24 @@ export const journalArticleType = defineType({
       type: 'string',
       description: 'Raw CSS background value (gradient) for the preview card.',
     }),
+    defineField({
+      name: 'category',
+      type: 'string',
+      description: 'Free-text tag shown on the article card and detail page, e.g. "Process".',
+    }),
+    defineField({
+      name: 'heroImage',
+      title: 'Hero image',
+      type: 'image',
+      options: { hotspot: true },
+      description: 'Shown on the article card and as the detail page banner. Falls back to the gradient above when empty.',
+    }),
+    defineField({
+      name: 'body',
+      type: 'text',
+      rows: 10,
+      description: 'Article body. Separate paragraphs with a blank line.',
+    }),
   ],
   preview: {
     select: { title: 'title', subtitle: 'previewSubtitle', order: 'order' },

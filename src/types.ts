@@ -47,6 +47,9 @@ export interface JournalArticle {
   previewTitle: string;
   previewSubtitle: string;
   gradient: string;
+  category?: string;
+  heroImage?: string;
+  body?: string;
 }
 
 export interface ProcessStepContent {
