@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
-import { motion } from 'motion/react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import Navbar from '../Navbar';
 import Footer from '../Footer';
 import ContactModal from '../ContactModal';
 import FilterDropdown from '../FilterDropdown';
+import GrowRevealCard from '../GrowRevealCard';
+import TagPills from '../TagPills';
 import { WORK_TYPES } from '../../data/portfolioData';
 import { HomePageContent, Project, SiteSettings } from '../../types';
 
@@ -81,7 +82,7 @@ export default function WorksView({ siteSettings, footerCta, contactModalContent
               data-cursor-text="VIEW CASE STUDY"
               className="group text-left block"
             >
-              <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-neutral-950">
+              <GrowRevealCard delay={(i % 2) * 0.06}>
                 <img
                   src={project.image}
                   alt={`${project.title} project preview`}
@@ -89,18 +90,13 @@ export default function WorksView({ siteSettings, footerCta, contactModalContent
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
-                {/* Swipe reveal: mask starts covering the card and retreats
-                    upward on scroll-into-view, uncovering it bottom to top. */}
-                <motion.div
-                  initial={{ y: '0%' }}
-                  whileInView={{ y: '-100%' }}
-                  viewport={{ once: true, amount: 0.3 }}
-                  transition={{ duration: 0.9, delay: (i % 2) * 0.15, ease: [0.76, 0, 0.24, 1] }}
-                  className="absolute inset-0 z-10 bg-[#FFFFFF] pointer-events-none"
-                />
-              </div>
-              <div className="relative z-20 mt-4 flex items-center justify-between">
-                <span className="font-display font-medium text-xl sm:text-2xl text-black">{project.client}</span>
+              </GrowRevealCard>
+              <p className="relative z-20 mt-4 font-display font-medium uppercase text-3xl sm:text-5xl text-black leading-snug">
+                {project.title}
+              </p>
+              <TagPills tags={project.tags.slice(0, 3)} />
+              <div className="relative z-20 mt-3 flex items-center gap-3">
+                <span className="font-medium text-neutral-600">{project.client}</span>
                 <span className="text-xs font-bold uppercase tracking-widest text-neutral-500">{project.domain}</span>
               </div>
             </Link>
