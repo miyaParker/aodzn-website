@@ -35,6 +35,13 @@ export const journalArticleType = defineType({
       description: 'Free-text tag shown on the article card and detail page, e.g. "Process".',
     }),
     defineField({
+      name: 'tags',
+      type: 'array',
+      of: [{ type: 'string' }],
+      options: { layout: 'tags' },
+      description: 'Short keyword pills shown on the article card, e.g. "Systems", "Figma".',
+    }),
+    defineField({
       name: 'heroImage',
       title: 'Hero image',
       type: 'image',

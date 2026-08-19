@@ -162,14 +162,14 @@ function RelatedArticles({ articles }: { articles: JournalArticle[] }) {
                 />
               )}
             </div>
+            <p className="mt-4 font-display font-medium uppercase text-xl sm:text-2xl text-black leading-snug group-hover:text-neutral-600 transition-colors">
+              {related.title}
+            </p>
             {related.category && (
-              <span className="block mt-4 text-[10px] font-bold uppercase tracking-widest text-neutral-500">
+              <span className="block mt-1 text-[10px] font-bold uppercase tracking-widest text-neutral-500">
                 {related.category}
               </span>
             )}
-            <p className="mt-2 font-display font-medium text-lg sm:text-xl text-black leading-snug group-hover:text-neutral-600 transition-colors">
-              {related.title}
-            </p>
           </Link>
         ))}
       </div>

@@ -1,13 +1,55 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { usePathname } from 'next/navigation';
-import { X, ArrowUpRight, Sparkles } from 'lucide-react';
+import { X, Sparkles, Home, Compass, Workflow, Briefcase, BookOpen, Circle } from 'lucide-react';
 import { createRipple } from '../lib/animations';
 import { NavLink, SiteSettings } from '../types';
 
 const EASE = [0.76, 0, 0.24, 1] as const;
+
+// Display order for the mega menu's social row, independent of however
+// they're ordered in Studio.
+const SOCIAL_LINK_ORDER = ['X', 'LinkedIn', 'Instagram', 'Website'];
+
+// Nav items have no per-item image in the data model, so the hover swatch
+// pairs a small illustrative icon (matched by keyword against the item's
+// label) with a gradient tile in the same radial-bloom-over-dark-base style
+// already used for journal article cards.
+const NAV_PREVIEW_GRADIENTS = [
+  'radial-gradient(120% 120% at 20% 15%, #a78bfa 0%, transparent 55%), radial-gradient(100% 100% at 80% 80%, #f59e0b 0%, transparent 45%), linear-gradient(160deg, #3b0764, #1e1b4b 70%)',
+  'radial-gradient(120% 120% at 20% 15%, #38bdf8 0%, transparent 55%), radial-gradient(100% 100% at 80% 80%, #1d4ed8 0%, transparent 45%), linear-gradient(160deg, #0c1a3d, #050914 70%)',
+  'radial-gradient(120% 120% at 20% 15%, #fb7185 0%, transparent 55%), radial-gradient(100% 100% at 80% 80%, #f97316 0%, transparent 45%), linear-gradient(160deg, #4c0519, #1f0a10 70%)',
+  'radial-gradient(120% 120% at 20% 15%, #34d399 0%, transparent 55%), radial-gradient(100% 100% at 80% 80%, #6366f1 0%, transparent 45%), linear-gradient(160deg, #022c22, #0f172a 70%)',
+  'radial-gradient(120% 120% at 20% 15%, #f472b6 0%, transparent 55%), radial-gradient(100% 100% at 80% 80%, #8b5cf6 0%, transparent 45%), linear-gradient(160deg, #3b0764, #1e1b4b 70%)',
+];
+
+function getNavIcon(label: string) {
+  const l = label.toLowerCase();
+  if (l.includes('home') || l.includes('welcome')) return Home;
+  if (l.includes('approach')) return Compass;
+  if (l.includes('process')) return Workflow;
+  if (l.includes('work')) return Briefcase;
+  if (l.includes('journal') || l.includes('blog')) return BookOpen;
+  return Circle;
+}
+
+// Small hover swatch — an icon-on-gradient tile that reveals inline next to
+// the label, rather than a floating preview box. Keeping it inside the row
+// means it's guaranteed to stay within the panel's own bounds.
+function NavItemSwatch({ label, index }: { label: string; index: number }) {
+  const Icon = getNavIcon(label);
+  return (
+    <span
+      aria-hidden="true"
+      className="shrink-0 flex items-center justify-center w-0 h-11 sm:h-12 rounded-lg overflow-hidden opacity-0 scale-90 group-hover:w-11 sm:group-hover:w-12 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 ease-out"
+      style={{ background: NAV_PREVIEW_GRADIENTS[index % NAV_PREVIEW_GRADIENTS.length] }}
+    >
+      <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white shrink-0" strokeWidth={1.75} />
+    </span>
+  );
+}
 
 // A staggered two-bar mark reads less like a stock hamburger icon and more
 // like a deliberate wordmark-adjacent glyph — paired with a text label, the
@@ -79,6 +121,28 @@ export default function Navbar({ siteSettings, onOpenContact, onOpenShowreel, na
   const [hideForSection, setHideForSection] = useState(false);
 
   const navItems = navItemsProp ?? siteSettings.navItems;
+  // The mega menu is used globally, off the homepage too, so it's limited
+  // to items with a real standalone destination. In the CMS data every item
+  // (including Works/Journal) is stored as a homepage anchor — #works,
+  // #journal — so this both drops Approach/Process (no page of their own)
+  // and swaps Works/Journal's href for their actual route rather than the
+  // homepage section.
+  const MEGA_MENU_ROUTES: Record<string, string> = { home: '/', works: '/works', journal: '/journal' };
+  const megaMenuItems = navItems
+    .filter((item) => item.href.replace(/^#/, '') in MEGA_MENU_ROUTES)
+    .map((item) => ({ ...item, href: MEGA_MENU_ROUTES[item.href.replace(/^#/, '')] }));
+
+  // Lock background scroll while the menu is open — unlike the old
+  // full-screen panel, the page is now visible (blurred) behind it, so it
+  // would otherwise still scroll underneath.
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [mobileMenuOpen]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -239,88 +303,110 @@ export default function Navbar({ siteSettings, onOpenContact, onOpenShowreel, na
         </div>
       </header>
 
-      {/* Mega menu — full-bleed rows, each one a huge display-type headline
-          with a divider and an arrow, closing on two bold CTA cards. Bigger
-          and blunter than a conventional dropdown list on purpose. */}
+      {/* Mega menu — a floating dark panel anchored under the toggle,
+          rather than a full-screen takeover. The rest of the page stays
+          visible through a blurred scrim behind it instead of being hidden
+          outright, so the menu reads as an overlay, not a scene change. */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.35, ease: EASE }}
-            className="fixed inset-0 z-30 bg-[#F6F6F4] overflow-y-auto"
-          >
-            <div className="min-h-full flex flex-col px-6 sm:px-10 lg:px-16 pt-24 sm:pt-28 pb-8 sm:pb-10">
-              {/* On large screens the nav list and CTA column sit side by
-                  side and share the row's full height — the links settle to
-                  its bottom, the CTAs sit at its top — instead of the CTAs
-                  trailing below the full-height link stack. */}
-              <div className="flex-1 flex flex-col lg:flex-row lg:items-stretch gap-8 lg:gap-12 xl:gap-20">
-                <nav className="border-t border-black/10 lg:flex-1 flex flex-col lg:justify-end">
-                  {navItems.map((item, i) => {
-                    const isAnchor = item.href.startsWith('#');
-                    const isActive = isAnchor
-                      ? activeSection === item.href.substring(1)
-                      : pathname?.startsWith(item.href);
+          <React.Fragment key="mega-menu">
+            <motion.button
+              aria-label="Close menu"
+              onClick={() => setMobileMenuOpen(false)}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4, ease: EASE }}
+              className="fixed inset-0 z-20 bg-black/10 backdrop-blur-md cursor-default"
+            />
+
+            <motion.div
+              initial={{ opacity: 0, x: 24 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 24 }}
+              transition={{ duration: 0.45, ease: EASE }}
+              className="fixed z-30 top-24 sm:top-28 right-4 sm:right-6 bottom-4 sm:bottom-6 w-[calc(100%-2rem)] sm:w-[420px] lg:w-[460px] rounded-2xl sm:rounded-3xl bg-black text-white flex flex-col overflow-y-auto shadow-2xl"
+            >
+              <div className="flex-1 flex flex-col justify-between p-6 sm:p-8 lg:p-10">
+                <nav className="flex flex-col">
+                  {megaMenuItems.map((item, i) => {
+                    const isActive = item.href === '/' ? pathname === '/' : pathname?.startsWith(item.href);
                     return (
-                      <div key={item.label} className="overflow-hidden border-b border-black/10">
-                        <motion.a
-                          href={isAnchor ? (scrollsInPage ? item.href : `/${item.href}`) : item.href}
-                          onClick={(e) => scrollToSection(e, item.href)}
-                          initial={{ y: '100%' }}
-                          animate={{ y: '0%' }}
-                          transition={{ duration: 0.6, delay: i * 0.05, ease: EASE }}
-                          className={`group flex items-center justify-between gap-6 py-4 sm:py-6 transition-colors duration-300 ${
-                            isActive ? 'text-[#04a3cc]' : 'text-black hover:text-[#04a3cc]'
-                          }`}
-                        >
-                          <span className="font-display font-medium uppercase leading-none tracking-tight text-6xl sm:text-7xl lg:text-8xl">
-                            {item.label}
-                          </span>
-                          <ArrowUpRight className="w-7 h-7 sm:w-9 sm:h-9 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
-                        </motion.a>
-                      </div>
+                      <motion.a
+                        key={item.label}
+                        href={item.href}
+                        onClick={() => setMobileMenuOpen(false)}
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: i * 0.05, ease: EASE }}
+                        className={`group py-2.5 sm:py-3 font-sans text-4xl sm:text-5xl leading-tight transition-colors duration-300 flex items-center gap-4 ${
+                          isActive ? 'text-[#04a3cc]' : 'text-white hover:text-neutral-400'
+                        }`}
+                      >
+                        {item.label}
+                        <NavItemSwatch label={item.label} index={i} />
+                      </motion.a>
                     );
                   })}
-                </nav>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-col lg:w-[380px] xl:w-[440px] lg:shrink-0 gap-4 sm:gap-6">
-                  <button
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      onOpenContact();
-                    }}
-                    className="group flex items-center justify-between gap-6 rounded-md bg-[#04a3cc] text-white px-6 sm:px-8 py-8 sm:py-10 text-left hover:brightness-105 transition-[filter]"
-                  >
-                    <div>
-                      <span className="block text-xs font-bold uppercase tracking-widest text-white/70 mb-3">Contact</span>
-                      <span className="block font-display font-medium uppercase text-3xl sm:text-4xl leading-[0.95]">
-                        {siteSettings.navbarCtaLabel}
-                      </span>
-                    </div>
-                    <ArrowUpRight className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
-                  </button>
-
-                  <button
+                  <motion.button
                     onClick={() => {
                       setMobileMenuOpen(false);
                       onOpenShowreel();
                     }}
-                    className="group flex items-center justify-between gap-6 rounded-md bg-white border border-black/10 text-black px-6 sm:px-8 py-8 sm:py-10 text-left hover:border-black/20 transition-colors"
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: megaMenuItems.length * 0.05, ease: EASE }}
+                    className="group py-2.5 sm:py-3 text-left font-sans text-4xl sm:text-5xl leading-tight text-white hover:text-neutral-400 transition-colors duration-300 flex items-center gap-4"
                   >
-                    <div>
-                      <span className="block text-xs font-bold uppercase tracking-widest text-neutral-500 mb-3">Showreel</span>
-                      <span className="block font-display font-medium uppercase text-3xl sm:text-4xl leading-[0.95]">
-                        {siteSettings.navbarShowreelLabel}
-                      </span>
-                    </div>
-                    <Sparkles className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 text-[#04a3cc]" />
-                  </button>
+                    {siteSettings.navbarShowreelLabel}
+                    <span
+                      aria-hidden="true"
+                      className="shrink-0 flex items-center justify-center w-0 h-11 sm:h-12 rounded-lg overflow-hidden opacity-0 scale-90 group-hover:w-11 sm:group-hover:w-12 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 ease-out"
+                      style={{ background: NAV_PREVIEW_GRADIENTS[megaMenuItems.length % NAV_PREVIEW_GRADIENTS.length] }}
+                    >
+                      <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-white shrink-0" strokeWidth={1.75} />
+                    </span>
+                  </motion.button>
+                </nav>
+
+                <div className="flex items-end justify-between gap-6 pt-10 mt-10 border-t border-white/15">
+                  <div className="flex flex-col gap-2 text-sm sm:text-base">
+                    <a
+                      href={`mailto:${siteSettings.projectContactEmail}`}
+                      className="underline underline-offset-4 decoration-white/30 hover:decoration-white transition-colors"
+                    >
+                      {siteSettings.projectContactEmail}
+                    </a>
+                    <button
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        onOpenContact();
+                      }}
+                      className="text-left text-white/50 hover:text-white transition-colors"
+                    >
+                      {siteSettings.navbarCtaLabel}
+                    </button>
+                  </div>
+
+                  <div className="flex flex-col items-end gap-2 text-sm sm:text-base">
+                    {[...siteSettings.socialLinks]
+                      .sort((a, b) => SOCIAL_LINK_ORDER.indexOf(a.label) - SOCIAL_LINK_ORDER.indexOf(b.label))
+                      .map((link) => (
+                      <a
+                        key={link.label}
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-white/70 hover:text-white transition-colors"
+                      >
+                        {link.label}
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </React.Fragment>
         )}
       </AnimatePresence>
     </>

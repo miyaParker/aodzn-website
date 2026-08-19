@@ -99,7 +99,7 @@ export default function JournalSection({ articles, content }: JournalSectionProp
                   className="hidden sm:block w-12 h-12 shrink-0 rounded-sm"
                   style={{ background: article.gradient }}
                 />
-                <span className="text-lg sm:text-xl lg:text-2xl font-medium tracking-tighter text-neutral-600 group-hover:text-black transition-colors truncate">
+                <span className="text-xl sm:text-2xl lg:text-3xl font-medium tracking-tighter text-neutral-600 group-hover:text-black transition-colors truncate">
                   {article.title}
                 </span>
               </div>

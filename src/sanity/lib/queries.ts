@@ -62,6 +62,7 @@ const journalArticleFields = /* groq */ `
   previewSubtitle,
   gradient,
   category,
+  tags,
   "heroImage": heroImage.asset->url
 `
 

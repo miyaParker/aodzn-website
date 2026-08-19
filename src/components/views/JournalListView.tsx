@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import Link from 'next/link';
 import Navbar from '../Navbar';
@@ -15,6 +15,62 @@ const EASE = [0.76, 0, 0.24, 1] as const;
 
 const formatArticleDate = (date: string) =>
   new Date(date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase();
+
+// Cycles accent → green → orange, matching the hero section's tag pills.
+const TAG_COLORS = ['bg-[#04a3cc] text-black', 'bg-[#A5CD04] text-black', 'bg-[#f59e0b] text-black'];
+
+// Starting square is half the final card's height/width: on a 4:3 box that
+// means 25% inset top/bottom (half the height showing) and 31.25% inset
+// left/right (half the height's worth of width, centered, staying square).
+// Animating straight to CLIP_FULL in one continuous tween — rather than via
+// an intermediate "square at full height" keyframe — means both axes reach
+// their target at the same time instead of height finishing first.
+const CLIP_HIDDEN = 'inset(25% 31.25% 25% 31.25%)';
+const CLIP_FULL = 'inset(0% 0% 0% 0%)';
+
+// Driven by a plain IntersectionObserver rather than Framer Motion's
+// `whileInView`, and observing a plain wrapper rather than the clipped
+// element itself: `clip-path` collapses the target to zero visible area at
+// its initial state, which some engines treat as zero intersection — so a
+// self-clipping element watching its own visibility can deadlock and never
+// see itself come into view. The wrapper (never clipped) is what's observed;
+// only the inner element carries the clip-path reveal.
+function GrowRevealCard({ children, delay }: { children: React.ReactNode; delay: number }) {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [revealed, setRevealed] = useState(false);
+
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setRevealed(true);
+          observer.disconnect();
+        }
+      },
+      // Positive bottom margin expands the trigger zone past the actual
+      // viewport edge, so this fires while the card is still approaching
+      // from below rather than waiting for it to actually be on screen.
+      { threshold: 0, rootMargin: '0px 0px 200px 0px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={wrapperRef} className="relative aspect-[4/3] overflow-hidden rounded-sm bg-white">
+      <motion.div
+        initial={{ clipPath: CLIP_HIDDEN }}
+        animate={revealed ? { clipPath: CLIP_FULL } : undefined}
+        transition={{ duration: 0.55, delay, ease: 'easeOut' }}
+        className="absolute inset-0"
+      >
+        {children}
+      </motion.div>
+    </div>
+  );
+}
 
 interface JournalListViewProps {
   siteSettings: SiteSettings;
@@ -83,7 +139,7 @@ export default function JournalListView({
               data-cursor-text="READ"
               className="group text-left block"
             >
-              <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-neutral-950">
+              <GrowRevealCard delay={(i % 2) * 0.06}>
                 {article.heroImage ? (
                   <img
                     src={article.heroImage}
@@ -99,29 +155,39 @@ export default function JournalListView({
                   />
                 )}
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
-                {/* Swipe reveal: mask starts covering the card and retreats
-                    upward on scroll-into-view, uncovering it bottom to top. */}
-                <motion.div
-                  initial={{ y: '0%' }}
-                  whileInView={{ y: '-100%' }}
-                  viewport={{ once: true, amount: 0.3 }}
-                  transition={{ duration: 0.9, delay: (i % 2) * 0.15, ease: EASE }}
-                  className="absolute inset-0 z-10 bg-[#FFFFFF] pointer-events-none"
-                />
-              </div>
-              <div className="relative z-20 mt-4 flex items-center gap-3">
-                {article.category && (
+              </GrowRevealCard>
+              <p className="relative z-20 mt-4 font-display font-medium uppercase text-3xl sm:text-5xl text-black leading-snug">
+                {article.title}
+              </p>
+              {/* {article.previewSubtitle && (
+                <p className="relative z-20 mt-1 font-sans text-sm sm:text-base text-neutral-600">
+                  {article.previewSubtitle}
+                </p>
+              )} */}
+              {article.tags && article.tags.length > 0 && (
+                <div className="relative z-20 flex flex-wrap items-center gap-2">
+                  {article.tags.map((tag, ti) => (
+                    <span
+                      key={tag}
+                      className={`px-3 py-1 rounded-sm font-display  text-3xl uppercase select-none ${
+                        TAG_COLORS[ti % TAG_COLORS.length]
+                      }`}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+              <div className="relative z-20 mt-3 flex items-center gap-3">
+                {/* {article.category && (
                   <span className="px-2.5 py-1 rounded-full bg-black/5 text-[10px] font-bold uppercase tracking-widest text-neutral-600">
                     {article.category}
                   </span>
-                )}
-                <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">
+                )} */}
+                <span className="text-[16x] font-medium uppercase tracking text-neutral-500">
                   {formatArticleDate(article.date)}
                 </span>
               </div>
-              <p className="relative z-20 mt-2 font-display font-medium text-xl sm:text-2xl text-black leading-snug">
-                {article.title}
-              </p>
             </Link>
           ))}
 

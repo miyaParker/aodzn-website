@@ -207,7 +207,7 @@ function StepCard({
             </motion.span>
           </div>
 
-          <h3 className="text-2xl sm:text-3xl lg:text-4xl leading-tight tracking-tight flex-1 max-w-xl overflow-hidden">
+          <h3 className="text-xl sm:text-2xl lg:text-3xl leading-tight tracking-tight flex-1 max-w-xl overflow-hidden font-medium">
             <motion.span
               className="block"
               initial={{ y: '100%', opacity: 0 }}

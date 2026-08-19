@@ -48,6 +48,7 @@ export interface JournalArticle {
   previewSubtitle: string;
   gradient: string;
   category?: string;
+  tags?: string[];
   heroImage?: string;
   body?: string;
   gallery?: string[];
