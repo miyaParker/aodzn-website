@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
+import Tag from './Tag';
 
 const WORD_EASE = [0.76, 0, 0.24, 1] as const;
 const ENTER_DURATION = 0.7;
@@ -140,18 +141,19 @@ export default function StrategySection() {
             </motion.span>
           </AnimatePresence>
 
-          {/* Pill: same rotated-badge treatment as Hero's word tags, in the
+          {/* Pill: same shared sticker treatment as Hero's word tags, in the
               same lemon-peel accent as Hero's INTENTIONAL pill. */}
-          <motion.span
-            aria-hidden="true"
-            initial={{ opacity: 0, scale: 0.6, rotate: -26 }}
-            animate={{ opacity: 1, scale: 1, rotate: -16 }}
-            transition={{ duration: 0.7, ease: WORD_EASE, delay: 0.3 }}
-            whileHover={{ rotate: 2, scale: 1.08 }}
-            className="absolute -top-10 -left-10 px-4 py-2 rounded-sm bg-[#A5CD04] text-black font-display font-bold text-4xl uppercase select-none cursor-default"
+          <Tag
+            bgColor="#A5CD04"
+            size="lg"
+            rotate={-16}
+            initialRotate={-26}
+            hoverRotate={2}
+            delay={0.3}
+            className="absolute -top-10 -left-10"
           >
             MY APPROACH
-          </motion.span>
+          </Tag>
         </div>
       </div>
 
@@ -169,13 +171,16 @@ export default function StrategySection() {
                 <h3 className="text-6xl sm:text-8xl lg:text-9xl font-display font-medium uppercase text-black leading-[0.95]">
                   {step.word}
                 </h3>
-                <motion.span
-                  whileHover={{ rotate: 8, scale: 1.1 }}
-                  className="absolute right-0 -bottom-3 inline-block px-2 py-2 rounded-sm font-display font-bold text-2xl uppercase tracking-widest transform -rotate-16 cursor-pointer leading-[90%]"
-                  style={{ backgroundColor: step.accent }}
+                <Tag
+                  bgColor={step.accent}
+                  size="sm"
+                  rotate={-16}
+                  hoverRotate={8}
+                  trigger="inView"
+                  className="absolute right-0 -bottom-3 tracking-widest cursor-pointer leading-[90%]"
                 >
                   {step.tag}
-                </motion.span>
+                </Tag>
               </div>
               <p className="text-sm sm:text-base text-neutral-600 font-medium leading-relaxed max-w-3xl">
                 {step.description}

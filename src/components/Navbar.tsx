@@ -128,9 +128,12 @@ export default function Navbar({ siteSettings, onOpenContact, onOpenShowreel, na
   // and swaps Works/Journal's href for their actual route rather than the
   // homepage section.
   const MEGA_MENU_ROUTES: Record<string, string> = { home: '/', works: '/works', journal: '/journal' };
-  const megaMenuItems = navItems
-    .filter((item) => item.href.replace(/^#/, '') in MEGA_MENU_ROUTES)
-    .map((item) => ({ ...item, href: MEGA_MENU_ROUTES[item.href.replace(/^#/, '')] }));
+  const megaMenuItems = [
+    ...navItems
+      .filter((item) => item.href.replace(/^#/, '') in MEGA_MENU_ROUTES)
+      .map((item) => ({ ...item, href: MEGA_MENU_ROUTES[item.href.replace(/^#/, '')] })),
+    { label: 'About', href: '/about' },
+  ];
 
   // Lock background scroll while the menu is open — unlike the old
   // full-screen panel, the page is now visible (blurred) behind it, so it

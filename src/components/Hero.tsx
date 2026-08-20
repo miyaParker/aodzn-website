@@ -5,6 +5,7 @@ import { motion } from 'motion/react';
 import { ArrowUpRight } from 'lucide-react';
 import { createRipple } from '../lib/animations';
 import { markHeroVideoReady } from '../lib/heroVideoReady';
+import Tag from './Tag';
 interface HeroProps {
   ready: boolean;
   onOpenShowreel: () => void;
@@ -278,20 +279,18 @@ export default function Hero({
 
           {/* Tag pill: pops in over the tail of the word, echoing the rotated
               sticker used near the bottom word. */}
-          <motion.span
-            aria-hidden="true"
-            initial={{ opacity: 0, scale: 0.6, rotate: -16 }}
-            animate={
-              ready
-                ? { opacity: 1, scale: 1, rotate: -6 }
-                : { opacity: 0, scale: 0.6, rotate: -16 }
-            }
-            transition={{ duration: 0.7, ease: WORD_EASE, delay: ready ? 1.7 : 0 }}
-            whileHover={{ rotate: 2, scale: 1.08 }}
-            className="absolute bottom-[8%] right-[6%] sm:right-[10%] px-5 py-2 rounded-sm bg-[#A5CD04] text-black font-display font-bold text-sm sm:text-4xl uppercase select-none cursor-default"
+          <Tag
+            bgColor="#A5CD04"
+            size="lg"
+            rotate={-6}
+            initialRotate={-16}
+            hoverRotate={2}
+            delay={1.7}
+            visible={ready}
+            className="absolute bottom-[8%] right-[6%] sm:right-[10%]"
           >
             INTENTIONAL
-          </motion.span>
+          </Tag>
         </motion.div>
       </div>
 
@@ -361,20 +360,19 @@ export default function Hero({
           {/* Tag pill: accent-colored twin of the DESIGN pill above, popping
               in over the start of the word so it doesn't collide with the
               sticker at the word's tail. */}
-          <motion.span
-            aria-hidden="true"
-            initial={{ opacity: 0, scale: 0.6, rotate: 16 }}
-            animate={
-              ready
-                ? { opacity: 1, scale: 1, rotate: 6 }
-                : { opacity: 0, scale: 0.6, rotate: 16 }
-            }
-            transition={{ duration: 0.7, ease: WORD_EASE, delay: ready ? 1.7 : 0 }}
-            whileHover={{ rotate: -2, scale: 1.08 }}
-            className="absolute bottom-[8%] left-[2%] px-5 py-2 rounded-sm bg-[#f59e0b] font-display font-bold text-sm sm:text-4xl uppercase select-none cursor-default"
+          <Tag
+            bgColor="#f59e0b"
+            textColor="#111111"
+            size="lg"
+            rotate={6}
+            initialRotate={16}
+            hoverRotate={-2}
+            delay={1.7}
+            visible={ready}
+            className="absolute bottom-[8%] left-[2%]"
           >
             BY DESIGN
-          </motion.span>
+          </Tag>
 
           {/* Sticker: a small rotated badge that pops in just after the word
               lands, echoing the tag pills used elsewhere on the site. */}

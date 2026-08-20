@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { motion } from 'motion/react';
 import Link from 'next/link';
 import Navbar from '../Navbar';
 import Footer from '../Footer';
@@ -11,6 +12,8 @@ import TagPills from '../TagPills';
 import { HomePageContent, JournalArticle, SiteSettings } from '../../types';
 
 type CategoryFilter = 'All' | string;
+
+const EASE = [0.76, 0, 0.24, 1] as const;
 
 const formatArticleDate = (date: string) =>
   new Date(date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase();
@@ -58,7 +61,26 @@ export default function JournalListView({
 
         <div className="w-full text-center">
           <h1 className="font-display font-medium text-7xl sm:text-9xl lg:text-[10rem] leading-[0.95] text-black">
-            Lessons that stuck,<br />and a few that didn&apos;t.
+            <span className="block overflow-hidden">
+              <motion.span
+                className="block"
+                initial={{ y: '100%', opacity: 0 }}
+                animate={{ y: '0%', opacity: 1 }}
+                transition={{ duration: 0.9, ease: EASE }}
+              >
+                Lessons that stuck,
+              </motion.span>
+            </span>
+            <span className="block overflow-hidden">
+              <motion.span
+                className="block"
+                initial={{ y: '100%', opacity: 0 }}
+                animate={{ y: '0%', opacity: 1 }}
+                transition={{ duration: 0.9, delay: 0.1, ease: EASE }}
+              >
+                and a few that didn&apos;t.
+              </motion.span>
+            </span>
           </h1>
 
           {categories.length > 0 && (

@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { motion } from 'motion/react';
 import Link from 'next/link';
 import Navbar from '../Navbar';
 import Footer from '../Footer';
@@ -13,6 +14,8 @@ import { HomePageContent, Project, SiteSettings } from '../../types';
 
 type TypeFilter = 'All' | Project['type'];
 type DomainFilter = 'All' | string;
+
+const EASE = [0.76, 0, 0.24, 1] as const;
 
 interface WorksViewProps {
   siteSettings: SiteSettings;
@@ -53,7 +56,26 @@ export default function WorksView({ siteSettings, footerCta, contactModalContent
 
         <div className="w-full text-center">
           <h1 className="font-display font-medium text-7xl sm:text-9xl lg:text-[10rem] leading-[0.95] text-black">
-            Work that ships,<br />and actually works.
+            <span className="block overflow-hidden">
+              <motion.span
+                className="block"
+                initial={{ y: '100%', opacity: 0 }}
+                animate={{ y: '0%', opacity: 1 }}
+                transition={{ duration: 0.9, ease: EASE }}
+              >
+                Work that ships,
+              </motion.span>
+            </span>
+            <span className="block overflow-hidden">
+              <motion.span
+                className="block"
+                initial={{ y: '100%', opacity: 0 }}
+                animate={{ y: '0%', opacity: 1 }}
+                transition={{ duration: 0.9, delay: 0.1, ease: EASE }}
+              >
+                and actually works.
+              </motion.span>
+            </span>
           </h1>
 
           <div className="mt-6 inline-flex items-center gap-6 sm:gap-8 px-6 py-3.5 rounded-full bg-white border border-black/10">
